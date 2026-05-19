@@ -9,6 +9,7 @@
 </p>
 
 <p align="center">
+  <img src="https://img.shields.io/badge/Version-3.0.0-8B5CF6?style=flat-square" />
   <img src="https://img.shields.io/badge/React-19.2-61DAFB?style=flat-square&logo=react&logoColor=white" />
   <img src="https://img.shields.io/badge/Firebase-11.3-FFCA28?style=flat-square&logo=firebase&logoColor=black" />
   <img src="https://img.shields.io/badge/Vite-8.0-646CFF?style=flat-square&logo=vite&logoColor=white" />
@@ -205,19 +206,22 @@ npm run build
 ## 🗄️ Firestore Data Model
 
 ### `users` Collection
-| Field          | Type     | Description                    |
-|----------------|----------|--------------------------------|
-| `displayName`  | string   | User's display name            |
-| `username`     | string   | Unique @username               |
-| `email`        | string   | Email address                  |
-| `photoURL`     | string   | Profile avatar URL             |
-| `bio`          | string   | Short bio text                 |
-| `location`     | string   | User location                  |
-| `website`      | string   | Personal website URL           |
-| `followers`    | array    | Array of follower UIDs         |
-| `rankPoints`   | number   | Total accumulated points       |
-| `rankTier`     | string   | Current rank (bronze–diamond)  |
-| `createdAt`    | timestamp| Account creation date          |
+| Field                    | Type      | Description                              |
+|--------------------------|-----------|------------------------------------------|
+| `displayName`            | string    | User's display name                      |
+| `username`               | string    | Unique @username                         |
+| `email`                  | string    | Email address                            |
+| `photoURL`               | string    | Profile avatar URL                       |
+| `bio`                    | string    | Short bio text (max 150 chars)           |
+| `location`               | string    | User location                            |
+| `website`                | string    | Personal website URL                     |
+| `followers`              | array     | Array of follower UIDs                   |
+| `rankPoints`             | number    | Total accumulated points                 |
+| `rankTier`               | string    | Current rank (bronze–diamond)            |
+| `preferences`            | map       | Notification & email preferences         |
+| `lastDisplayNameChange`  | number    | Timestamp of last display name change    |
+| `lastUsernameChange`     | number    | Timestamp of last username change        |
+| `createdAt`              | timestamp | Account creation date                    |
 
 ### `styles` Collection
 | Field              | Type      | Description                     |
@@ -273,6 +277,9 @@ The app uses a custom design token system defined in `tailwind.config.js`:
 - All database operations require Firebase Authentication
 - Firestore security rules should enforce `auth.uid` based access control
 - Client-side points are validated against server data via `recalculateAllUserPoints()`
+- Username and display name changes are rate-limited to once every 24 hours
+- Bio field is capped at 150 characters to prevent abuse
+- In-app notifications can be disabled per-user via preferences
 
 ---
 
@@ -307,6 +314,55 @@ The app uses a custom design token system defined in `tailwind.config.js`:
 ## 📄 License
 
 This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 📋 Version History
+
+### 🔹 v3.0.0 — *Settings & Preferences Update* (May 20, 2026)
+> Premium settings overhaul with notification controls and account management.
+- ✨ Completely redesigned **Settings page** with premium glassmorphic UI
+- ✨ Fully functional **Notifications preferences** tab (Email, In-App, Marketing toggles)
+- ✨ Custom animated **toggle switches** component
+- ✨ **Real-time availability checks** for both display name and username (debounced Firestore queries)
+- 🔒 **24-hour rate limit** on username and display name changes
+- 🔒 **150-character bio limit** with live character counter
+- 🔔 In-app notifications now **respect user preferences** — turning off the toggle hides the bell badge and stops fetching
+- 🎨 Responsive sidebar navigation with horizontal scroll on mobile
+- 🎨 Input fields with embedded icons, dynamic glow borders, and status indicators
+- ⚡ Page auto-refreshes after successful settings save
+- 🗑️ Removed avatar change/remove buttons (avatar is linked to auth provider)
+- 🛡️ Settings button on profile page only visible to the profile owner
+- 🔗 Settings link added to header user dropdown menu
+
+### 🔹 v2.0.0 — *Social Platform & Gamification Update* (May 19, 2026)
+> Full social platform with community interactions, gamification, and premium analytics.
+- ✨ **Points & Ranking system** — earn points for likes, saves, downloads, followers, and uploads
+- ✨ Five ranking tiers: 🥉 Bronze → 🥈 Silver → 🥇 Gold → 💎 Platinum → 👑 Diamond
+- ✨ **Real-time notification system** — instant alerts for likes, saves, downloads, and follows
+- ✨ Auto-pruning: max 50 notifications per user (oldest deleted automatically)
+- ✨ **Global Leaderboard** with sortable columns and animated rank badges
+- ✨ **Creator Dashboard** with premium glassmorphic UI, live stats grid, and rank display
+- ✨ **Growth Velocity charts** and engagement breakdown on Analytics page
+- ✨ **StyleCard social integration** — inline Follow/Unfollow, author modal with full stats
+- ✨ Dynamic author avatar synchronization across all platform cards
+- ✨ **Home page** transformed with real-time Firestore-aggregated stats and dynamic CTAs
+- ✨ Header navigation refined with Tags dropdown and notification bell
+- 🔐 Protected routes with automatic auth redirects
+- 🎨 Consistent dark-mode glassmorphic design system across all pages
+
+### 🔹 v1.0.0 — *Initial Release* (May 17, 2026)
+> Core platform scaffolding with upload, explore, and authentication.
+- ✨ **Upload system** — publish CSS/HTML/JS components with live iframe preview
+- ✨ **Explore page** — browse and search all community styles with Fuse.js fuzzy search
+- ✨ **Style Detail page** — full code viewer with CodeMirror 6 editor and One Dark theme
+- ✨ **Like, Save, and Download** interactions on all style cards
+- ✨ **User Profiles** — bio, location, website, social links, and published styles grid
+- ✨ **Wishlist page** — view all saved/bookmarked styles
+- 🔐 **Firebase Authentication** — Email/Password and Google Sign-In
+- 🎨 Custom design token system with TailwindCSS (dark mode, glassmorphism, gradient accents)
+- ⚙️ Vite 8 build tooling with hot module replacement
+- 📱 Fully responsive layout across all breakpoints
 
 ---
 

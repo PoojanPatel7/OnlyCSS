@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { db } from '../firebase/config';
 import { collection, query, where, getDocs, onSnapshot, limit, doc, updateDoc, increment, arrayUnion, arrayRemove } from 'firebase/firestore';
 import StyleCard from '../components/StyleCard';
-import { Code, Layout, Heart, Info, MapPin, Link as LinkIcon, Calendar, Activity, UserPlus, UserCheck, Bookmark } from 'lucide-react';
+import { Code, Layout, Heart, Info, MapPin, Link as LinkIcon, Calendar, Activity, UserPlus, UserCheck, Bookmark, Settings } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { createNotification } from '../utils/notifications';
 import { updateUserPoints, POINTS } from '../utils/points';
@@ -154,7 +154,7 @@ const Profile = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#050508] flex items-center justify-center">
-        <div className="w-12 h-12 rounded-full border-4 border-white/10 border-t-accent-purple animate-spin"></div>
+        <div className="w-12 h-12 rounded-full border-4 border-text-primary/10 border-t-accent-purple animate-spin"></div>
       </div>
     );
   }
@@ -162,10 +162,10 @@ const Profile = () => {
   if (!profileUser) {
     return (
       <div className="min-h-screen bg-[#050508] flex flex-col items-center justify-center p-4">
-        <div className="bg-white/[0.02] border border-white/5 rounded-[2rem] p-12 text-center backdrop-blur-xl max-w-md w-full shadow-2xl">
+        <div className="bg-white/[0.02] border border-text-primary/5 rounded-[2rem] p-12 text-center backdrop-blur-xl max-w-md w-full shadow-2xl">
           <div className="text-6xl mb-6">👻</div>
-          <h2 className="text-3xl font-heading font-bold text-white mb-2 tracking-tight">Ghost User</h2>
-          <p className="text-white/40 mb-8">The developer <span className="text-accent-cyan">@{username}</span> doesn't exist or has vanished into the void.</p>
+          <h2 className="text-3xl font-heading font-bold text-text-primary mb-2 tracking-tight">Ghost User</h2>
+          <p className="text-text-primary/40 mb-8">The developer <span className="text-accent-cyan">@{username}</span> doesn't exist or has vanished into the void.</p>
           <Link to="/explore" className="w-full btn-primary py-3 rounded-xl flex justify-center items-center font-bold">Return to Explore</Link>
         </div>
       </div>
@@ -197,7 +197,7 @@ const Profile = () => {
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Profile Header Card */}
-        <div className="relative -mt-32 mb-12 bg-white/[0.03] backdrop-blur-2xl rounded-[2rem] border border-white/10 p-6 sm:p-10 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+        <div className="relative -mt-32 mb-12 bg-white/[0.03] backdrop-blur-2xl rounded-[2rem] border border-text-primary/10 p-6 sm:p-10 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
           <div className="flex flex-col md:flex-row gap-8 items-start md:items-center">
             
             {/* Avatar Group */}
@@ -208,9 +208,9 @@ const Profile = () => {
                 alt={profileUser.displayName} 
                 className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-[#050508] relative z-10 shadow-2xl"
                 fallbackText={profileUser.displayName?.charAt(0) || 'U'}
-                fallbackClass="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-[#050508] relative z-10 shadow-2xl bg-gradient-to-tr from-accent-purple to-accent-cyan flex items-center justify-center text-6xl text-white font-bold"
+                fallbackClass="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-[#050508] relative z-10 shadow-2xl bg-gradient-to-tr from-accent-purple to-accent-cyan flex items-center justify-center text-6xl text-text-primary font-bold"
               />
-              <div className="absolute bottom-2 right-2 w-10 h-10 rounded-full bg-[#050508] border border-white/10 flex items-center justify-center text-xl shadow-[0_0_20px_rgba(0,0,0,0.8)] z-20 tooltip-trigger">
+              <div className="absolute bottom-2 right-2 w-10 h-10 rounded-full bg-[#050508] border border-text-primary/10 flex items-center justify-center text-xl shadow-[0_0_20px_rgba(0,0,0,0.8)] z-20 tooltip-trigger">
                 {getRankBadge(profileUser.rankTier)}
               </div>
             </div>
@@ -218,7 +218,7 @@ const Profile = () => {
             {/* User Info */}
             <div className="flex-1 text-center md:text-left pt-2 md:pt-0">
               <div className="flex flex-col md:flex-row md:items-center gap-3 mb-2">
-                <h1 className="text-3xl md:text-4xl font-heading font-bold text-white tracking-tight">
+                <h1 className="text-3xl md:text-4xl font-heading font-bold text-text-primary tracking-tight">
                   {profileUser.displayName}
                 </h1>
                 <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg border bg-gradient-to-r ${getRankColor(profileUser.rankTier)} bg-opacity-10 backdrop-blur-sm self-center md:self-auto`}>
@@ -229,21 +229,21 @@ const Profile = () => {
               
               
               {profileUser.bio ? (
-                <p className="text-white/60 max-w-2xl text-sm leading-relaxed mb-6 mx-auto md:mx-0">
+                <p className="text-text-primary/60 max-w-2xl text-sm leading-relaxed mb-6 mx-auto md:mx-0">
                   {profileUser.bio}
                 </p>
               ) : (
-                <p className="text-white/30 max-w-2xl text-sm italic mb-6 mx-auto md:mx-0">
+                <p className="text-text-primary/30 max-w-2xl text-sm italic mb-6 mx-auto md:mx-0">
                   This developer is a mystery. No bio provided.
                 </p>
               )}
 
               {/* Meta Links */}
-              <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-xs font-medium text-white/40 mb-8 md:mb-0">
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-xs font-medium text-text-primary/40 mb-8 md:mb-0">
                 <div className="flex items-center gap-1.5"><Calendar size={14} /> Joined {joinDate}</div>
                 {profileUser.location && <div className="flex items-center gap-1.5"><MapPin size={14} /> {profileUser.location}</div>}
                 {profileUser.website && (
-                  <a href={profileUser.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-accent-cyan hover:text-white transition-colors">
+                  <a href={profileUser.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-accent-cyan hover:text-text-primary transition-colors">
                     <LinkIcon size={14} /> {profileUser.website.replace(/^https?:\/\//, '')}
                   </a>
                 )}
@@ -252,44 +252,55 @@ const Profile = () => {
             
             {/* Stats & Actions */}
             <div className="w-full md:w-auto flex flex-col items-center md:items-end gap-6 shrink-0">
-              <div className="flex gap-4 md:gap-6 bg-black/40 border border-white/5 p-4 rounded-2xl w-full md:w-auto justify-center">
+              <div className="flex gap-4 md:gap-6 bg-black/40 border border-text-primary/5 p-4 rounded-2xl w-full md:w-auto justify-center">
                 <div className="text-center px-2">
-                  <div className="text-2xl font-bold text-white mb-1">{profileUser.rankPoints || 0}</div>
-                  <div className="text-[10px] text-white/40 uppercase tracking-widest">Points</div>
+                  <div className="text-2xl font-bold text-text-primary mb-1">{profileUser.rankPoints || 0}</div>
+                  <div className="text-[10px] text-text-primary/40 uppercase tracking-widest">Points</div>
                 </div>
-                <div className="w-px bg-white/10"></div>
+                <div className="w-px bg-text-primary/10"></div>
                 <div className="text-center px-2">
-                  <div className="text-2xl font-bold text-white mb-1">{userStyles.length}</div>
-                  <div className="text-[10px] text-white/40 uppercase tracking-widest">Styles</div>
+                  <div className="text-2xl font-bold text-text-primary mb-1">{userStyles.length}</div>
+                  <div className="text-[10px] text-text-primary/40 uppercase tracking-widest">Styles</div>
                 </div>
-                <div className="w-px bg-white/10"></div>
+                <div className="w-px bg-text-primary/10"></div>
                 <div className="text-center px-2">
-                  <div className="text-2xl font-bold text-white mb-1">{profileUser.followersCount || 0}</div>
-                  <div className="text-[10px] text-white/40 uppercase tracking-widest">Followers</div>
+                  <div className="text-2xl font-bold text-text-primary mb-1">{profileUser.followersCount || 0}</div>
+                  <div className="text-[10px] text-text-primary/40 uppercase tracking-widest">Followers</div>
                 </div>
               </div>
               
-              {(!currentUser || currentUser.uid !== profileUser.id) && (
+              {(!currentUser || currentUser.uid !== profileUser.id) ? (
                 <button 
                   onClick={handleFollow}
                   className="w-full relative group overflow-hidden rounded-xl p-[1px]"
                 >
-                  <span className={`absolute inset-0 bg-gradient-to-r ${profileUser.followers?.includes(currentUser?.uid) ? 'from-white/20 to-white/10' : 'from-accent-purple to-accent-cyan opacity-70 group-hover:opacity-100'} transition-opacity`}></span>
-                  <div className={`relative ${profileUser.followers?.includes(currentUser?.uid) ? 'bg-white/10 text-white' : 'bg-[#050508] hover:bg-transparent'} transition-colors px-8 py-3 rounded-xl flex items-center justify-center gap-2`}>
+                  <span className={`absolute inset-0 bg-gradient-to-r ${profileUser.followers?.includes(currentUser?.uid) ? 'from-text-primary/20 to-text-primary/10' : 'from-accent-purple to-accent-cyan opacity-70 group-hover:opacity-100'} transition-opacity`}></span>
+                  <div className={`relative ${profileUser.followers?.includes(currentUser?.uid) ? 'bg-text-primary/10 text-text-primary' : 'bg-[#050508] hover:bg-transparent'} transition-colors px-8 py-3 rounded-xl flex items-center justify-center gap-2`}>
                     {profileUser.followers?.includes(currentUser?.uid) ? (
                       <><UserCheck size={18} /> Following</>
                     ) : (
-                      <><UserPlus size={18} className="text-accent-cyan group-hover:text-white transition-colors" /> <span className="font-bold text-white tracking-wide">Follow</span></>
+                      <><UserPlus size={18} className="text-accent-cyan group-hover:text-text-primary transition-colors" /> <span className="font-bold text-text-primary tracking-wide">Follow</span></>
                     )}
                   </div>
                 </button>
+              ) : (
+                <Link
+                  to="/settings"
+                  className="w-full relative group overflow-hidden rounded-xl p-[1px]"
+                >
+                  <span className="absolute inset-0 bg-gradient-to-r from-text-primary/20 to-text-primary/10 transition-opacity hover:opacity-100 opacity-70"></span>
+                  <div className="relative bg-[#050508] hover:bg-transparent transition-colors px-8 py-3 rounded-xl flex items-center justify-center gap-2">
+                    <Settings size={18} className="text-text-primary/70 group-hover:text-text-primary transition-colors" />
+                    <span className="font-bold text-text-primary tracking-wide">Settings</span>
+                  </div>
+                </Link>
               )}
             </div>
           </div>
         </div>
 
         {/* Navigation Tabs */}
-        <div className="flex flex-wrap gap-2 md:gap-4 mb-10 border-b border-white/5 pb-px">
+        <div className="flex flex-wrap gap-2 md:gap-4 mb-10 border-b border-text-primary/5 pb-px">
           {[
             { id: 'styles', icon: <Code size={16} />, label: 'Styles', count: userStyles.length },
             { id: 'saved', icon: <Bookmark size={16} />, label: 'Saved', count: savedStyles.length },
@@ -301,12 +312,12 @@ const Profile = () => {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-2 px-5 py-3 text-sm font-bold transition-all relative ${
-                activeTab === tab.id ? 'text-white' : 'text-white/40 hover:text-white/80 hover:bg-white/[0.02] rounded-t-xl'
+                activeTab === tab.id ? 'text-text-primary' : 'text-text-primary/40 hover:text-text-primary/80 hover:bg-white/[0.02] rounded-t-xl'
               }`}
             >
               {tab.icon}
               {tab.label}
-              {tab.count !== null && <span className="bg-white/10 text-white/70 px-2 py-0.5 rounded-full text-xs">{tab.count}</span>}
+              {tab.count !== null && <span className="bg-text-primary/10 text-text-primary/70 px-2 py-0.5 rounded-full text-xs">{tab.count}</span>}
               
               {activeTab === tab.id && (
                 <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-accent-purple to-accent-cyan shadow-[0_0_10px_rgba(139,92,246,0.5)]"></div>
@@ -325,12 +336,12 @@ const Profile = () => {
                 ))}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center py-20 px-4 bg-white/[0.01] border border-white/5 rounded-3xl backdrop-blur-sm">
-                <div className="w-20 h-20 rounded-full bg-white/[0.03] flex items-center justify-center mb-6 border border-white/5">
-                  <Code className="text-white/20" size={32} />
+              <div className="flex flex-col items-center justify-center py-20 px-4 bg-white/[0.01] border border-text-primary/5 rounded-3xl backdrop-blur-sm">
+                <div className="w-20 h-20 rounded-full bg-white/[0.03] flex items-center justify-center mb-6 border border-text-primary/5">
+                  <Code className="text-text-primary/20" size={32} />
                 </div>
-                <h3 className="text-2xl font-heading font-bold mb-2 text-white/80">No styles published</h3>
-                <p className="text-white/40 text-center max-w-md">
+                <h3 className="text-2xl font-heading font-bold mb-2 text-text-primary/80">No styles published</h3>
+                <p className="text-text-primary/40 text-center max-w-md">
                   {profileUser.displayName} hasn't shared any CSS magic with the community yet.
                 </p>
               </div>
@@ -344,12 +355,12 @@ const Profile = () => {
                 ))}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center py-20 px-4 bg-white/[0.01] border border-white/5 rounded-3xl backdrop-blur-sm">
-                <div className="w-20 h-20 rounded-full bg-white/[0.03] flex items-center justify-center mb-6 border border-white/5">
-                  <Bookmark className="text-white/20" size={32} />
+              <div className="flex flex-col items-center justify-center py-20 px-4 bg-white/[0.01] border border-text-primary/5 rounded-3xl backdrop-blur-sm">
+                <div className="w-20 h-20 rounded-full bg-white/[0.03] flex items-center justify-center mb-6 border border-text-primary/5">
+                  <Bookmark className="text-text-primary/20" size={32} />
                 </div>
-                <h3 className="text-2xl font-heading font-bold mb-2 text-white/80">No saved styles</h3>
-                <p className="text-white/40 text-center max-w-md">
+                <h3 className="text-2xl font-heading font-bold mb-2 text-text-primary/80">No saved styles</h3>
+                <p className="text-text-primary/40 text-center max-w-md">
                   {profileUser.displayName} hasn't saved any CSS styles to their wishlist yet.
                 </p>
               </div>
@@ -364,12 +375,12 @@ const Profile = () => {
                 ))}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center py-20 px-4 bg-white/[0.01] border border-white/5 rounded-3xl backdrop-blur-sm">
-                <div className="w-20 h-20 rounded-full bg-white/[0.03] flex items-center justify-center mb-6 border border-white/5">
-                  <Heart className="text-white/20" size={32} />
+              <div className="flex flex-col items-center justify-center py-20 px-4 bg-white/[0.01] border border-text-primary/5 rounded-3xl backdrop-blur-sm">
+                <div className="w-20 h-20 rounded-full bg-white/[0.03] flex items-center justify-center mb-6 border border-text-primary/5">
+                  <Heart className="text-text-primary/20" size={32} />
                 </div>
-                <h3 className="text-2xl font-heading font-bold mb-2 text-white/80">No liked styles</h3>
-                <p className="text-white/40 text-center max-w-md">
+                <h3 className="text-2xl font-heading font-bold mb-2 text-text-primary/80">No liked styles</h3>
+                <p className="text-text-primary/40 text-center max-w-md">
                   {profileUser.displayName} hasn't liked any CSS styles yet.
                 </p>
               </div>
@@ -377,12 +388,12 @@ const Profile = () => {
           )}
           
           {['collections', 'activity'].includes(activeTab) && (
-            <div className="flex flex-col items-center justify-center py-20 px-4 bg-white/[0.01] border border-white/5 rounded-3xl backdrop-blur-sm">
-              <div className="w-20 h-20 rounded-full bg-white/[0.03] flex items-center justify-center mb-6 border border-white/5">
-                <Info className="text-white/20" size={32} />
+            <div className="flex flex-col items-center justify-center py-20 px-4 bg-white/[0.01] border border-text-primary/5 rounded-3xl backdrop-blur-sm">
+              <div className="w-20 h-20 rounded-full bg-white/[0.03] flex items-center justify-center mb-6 border border-text-primary/5">
+                <Info className="text-text-primary/20" size={32} />
               </div>
-              <h3 className="text-2xl font-heading font-bold mb-2 text-white/80">Coming Soon</h3>
-              <p className="text-white/40 text-center max-w-md">
+              <h3 className="text-2xl font-heading font-bold mb-2 text-text-primary/80">Coming Soon</h3>
+              <p className="text-text-primary/40 text-center max-w-md">
                 This section is currently under construction. Check back later!
               </p>
             </div>

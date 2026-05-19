@@ -15,20 +15,20 @@ const Footer = () => {
               Where CSS becomes art. Discover, copy, and share beautiful CSS effects created by developers worldwide.
             </p>
             <div className="flex items-center gap-4">
-              <a href="#" className="w-8 h-8 rounded-full bg-primary-surface border border-primary-border flex items-center justify-center text-text-muted hover:text-white hover:border-text-muted transition-all">
+              <a href="#" className="w-8 h-8 rounded-full bg-primary-surface border border-primary-border flex items-center justify-center text-text-muted hover:text-text-primary hover:border-text-muted transition-all">
                 𝕏
               </a>
-              <a href="#" className="w-8 h-8 rounded-full bg-primary-surface border border-primary-border flex items-center justify-center text-text-muted hover:text-white hover:border-text-muted transition-all">
+              <a href="#" className="w-8 h-8 rounded-full bg-primary-surface border border-primary-border flex items-center justify-center text-text-muted hover:text-text-primary hover:border-text-muted transition-all">
                 GH
               </a>
-              <a href="#" className="w-8 h-8 rounded-full bg-primary-surface border border-primary-border flex items-center justify-center text-text-muted hover:text-white hover:border-text-muted transition-all">
+              <a href="#" className="w-8 h-8 rounded-full bg-primary-surface border border-primary-border flex items-center justify-center text-text-muted hover:text-text-primary hover:border-text-muted transition-all">
                 DC
               </a>
             </div>
           </div>
           
           <div>
-            <h4 className="text-white font-medium mb-4">Platform</h4>
+            <h4 className="text-text-primary font-medium mb-4">Platform</h4>
             <ul className="space-y-2">
               <li><Link to="/explore" className="text-sm text-text-muted hover:text-accent-cyan transition-colors">Explore Styles</Link></li>
               <li><Link to="/leaderboard" className="text-sm text-text-muted hover:text-accent-cyan transition-colors">Leaderboard</Link></li>
@@ -38,13 +38,13 @@ const Footer = () => {
           </div>
 
           <div>
-            <h4 className="text-white font-medium mb-4">Newsletter</h4>
+            <h4 className="text-text-primary font-medium mb-4">Newsletter</h4>
             <p className="text-sm text-text-muted mb-4">Get weekly CSS inspiration straight to your inbox.</p>
             <div className="flex gap-2">
               <input 
                 type="email" 
                 placeholder="Email address" 
-                className="bg-primary-surface border border-primary-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent-purple w-full"
+                className="bg-primary-surface border border-primary-border rounded-lg px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-accent-purple w-full"
               />
               <button className="bg-white text-black px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">
                 Join
@@ -58,9 +58,9 @@ const Footer = () => {
             © {new Date().getFullYear()} OnlyCSS. Made with ❤️ by the CSS community.
           </p>
           <div className="flex gap-4">
-            <a href="#" className="text-xs text-text-muted hover:text-white">Privacy Policy</a>
-            <a href="#" className="text-xs text-text-muted hover:text-white">Terms of Service</a>
-            <a href="#" className="text-xs text-text-muted hover:text-white">Contact</a>
+            <a href="#" className="text-xs text-text-muted hover:text-text-primary">Privacy Policy</a>
+            <a href="#" className="text-xs text-text-muted hover:text-text-primary">Terms of Service</a>
+            <a href="#" className="text-xs text-text-muted hover:text-text-primary">Contact</a>
           </div>
         </div>
       </div>

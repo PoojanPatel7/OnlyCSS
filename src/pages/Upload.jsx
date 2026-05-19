@@ -151,7 +151,7 @@ const Upload = () => {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="e.g., Neon Glow Button" 
-                  className="w-full bg-primary-bg border border-primary-border rounded-lg px-4 py-2 text-white focus:border-accent-purple focus:outline-none"
+                  className="w-full bg-primary-bg border border-primary-border rounded-lg px-4 py-2 text-text-primary focus:border-accent-purple focus:outline-none"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -160,7 +160,7 @@ const Upload = () => {
                   <select 
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
-                    className="w-full bg-primary-bg border border-primary-border rounded-lg px-4 py-2 text-white focus:border-accent-purple focus:outline-none"
+                    className="w-full bg-primary-bg border border-primary-border rounded-lg px-4 py-2 text-text-primary focus:border-accent-purple focus:outline-none"
                   >
                     <option>Animations</option>
                     <option>Buttons</option>
@@ -174,7 +174,7 @@ const Upload = () => {
                   <select 
                     value={isCombined ? 'combined' : 'separated'}
                     onChange={(e) => setIsCombined(e.target.value === 'combined')}
-                    className="w-full bg-primary-bg border border-primary-border rounded-lg px-4 py-2 text-white focus:border-accent-purple focus:outline-none"
+                    className="w-full bg-primary-bg border border-primary-border rounded-lg px-4 py-2 text-text-primary focus:border-accent-purple focus:outline-none"
                   >
                     <option value="separated">Separate Files</option>
                     <option value="combined">Combined Single File</option>
@@ -189,7 +189,7 @@ const Upload = () => {
               {isCombined ? (
                 <button 
                   onClick={() => setActiveTab('combined')}
-                  className={`px-6 py-3 text-sm font-medium flex items-center gap-2 whitespace-nowrap ${activeTab === 'combined' ? 'text-accent-purple border-b-2 border-accent-purple bg-white/5' : 'text-text-muted hover:text-white'}`}
+                  className={`px-6 py-3 text-sm font-medium flex items-center gap-2 whitespace-nowrap ${activeTab === 'combined' ? 'text-accent-purple border-b-2 border-accent-purple bg-text-primary/5' : 'text-text-muted hover:text-text-primary'}`}
                 >
                   <FileCode2 size={16} /> Combined
                 </button>
@@ -197,19 +197,19 @@ const Upload = () => {
                 <>
                   <button 
                     onClick={() => setActiveTab('html')}
-                    className={`px-6 py-3 text-sm font-medium flex items-center gap-2 whitespace-nowrap ${activeTab === 'html' ? 'text-accent-pink border-b-2 border-accent-pink bg-white/5' : 'text-text-muted hover:text-white'}`}
+                    className={`px-6 py-3 text-sm font-medium flex items-center gap-2 whitespace-nowrap ${activeTab === 'html' ? 'text-accent-pink border-b-2 border-accent-pink bg-text-primary/5' : 'text-text-muted hover:text-text-primary'}`}
                   >
                     <Layers size={16} /> HTML
                   </button>
                   <button 
                     onClick={() => setActiveTab('css')}
-                    className={`px-6 py-3 text-sm font-medium flex items-center gap-2 whitespace-nowrap ${activeTab === 'css' ? 'text-accent-cyan border-b-2 border-accent-cyan bg-white/5' : 'text-text-muted hover:text-white'}`}
+                    className={`px-6 py-3 text-sm font-medium flex items-center gap-2 whitespace-nowrap ${activeTab === 'css' ? 'text-accent-cyan border-b-2 border-accent-cyan bg-text-primary/5' : 'text-text-muted hover:text-text-primary'}`}
                   >
                     <Code size={16} /> CSS
                   </button>
                   <button 
                     onClick={() => setActiveTab('js')}
-                    className={`px-6 py-3 text-sm font-medium flex items-center gap-2 whitespace-nowrap ${activeTab === 'js' ? 'text-amber-400 border-b-2 border-amber-400 bg-white/5' : 'text-text-muted hover:text-white'}`}
+                    className={`px-6 py-3 text-sm font-medium flex items-center gap-2 whitespace-nowrap ${activeTab === 'js' ? 'text-amber-400 border-b-2 border-amber-400 bg-text-primary/5' : 'text-text-muted hover:text-text-primary'}`}
                   >
                     <FileCode2 size={16} /> JS
                   </button>
@@ -235,7 +235,7 @@ const Upload = () => {
         <div className="flex flex-col">
           <div className="card flex flex-col h-[600px] border border-primary-border">
             <div className="p-4 border-b border-primary-border bg-primary-surface flex justify-between items-center">
-              <h3 className="font-medium flex items-center gap-2 text-white">
+              <h3 className="font-medium flex items-center gap-2 text-text-primary">
                 <Eye size={18} className="text-accent-purple" /> Live Preview
               </h3>
               <div className="flex gap-2">

@@ -392,7 +392,7 @@ const StyleCard = ({ style, isPreview = false, className = "", authorOverride = 
           {currentUser && currentUser.uid === style.authorId && !previewMode && (
             <button
               onClick={handleDeleteClick}
-              className="bg-red-500/80 hover:bg-red-500 text-white p-1 rounded backdrop-blur transition-colors shadow-lg"
+              className="bg-red-500/80 hover:bg-red-500 text-text-primary p-1 rounded backdrop-blur transition-colors shadow-lg"
               title="Delete Style"
             >
               <Trash2 size={12} />
@@ -414,7 +414,7 @@ const StyleCard = ({ style, isPreview = false, className = "", authorOverride = 
         {!previewMode && (
           <Link
             to={`/style/${style.id}`}
-            className="absolute bottom-3 right-3 bg-black/60 backdrop-blur border border-white/10 text-white text-xs font-bold py-1.5 px-3 rounded-lg flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-all z-20 hover:bg-white/20 hover:scale-105"
+            className="absolute bottom-3 right-3 bg-black/60 backdrop-blur border border-text-primary/10 text-text-primary text-xs font-bold py-1.5 px-3 rounded-lg flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-all z-20 hover:bg-text-primary/20 hover:scale-105"
           >
             <Code size={14} /> View Code
           </Link>
@@ -432,11 +432,11 @@ const StyleCard = ({ style, isPreview = false, className = "", authorOverride = 
               {displayPhoto ? (
                 <img src={displayPhoto} alt={displayUsername} className="w-6 h-6 rounded-full border border-transparent group-hover/author:border-accent-cyan transition-colors object-cover shrink-0" />
               ) : (
-                <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-accent-purple to-accent-cyan flex items-center justify-center text-[10px] font-bold text-white border border-transparent group-hover/author:border-white transition-colors shrink-0">
+                <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-accent-purple to-accent-cyan flex items-center justify-center text-[10px] font-bold text-text-primary border border-transparent group-hover/author:border-white transition-colors shrink-0">
                   {displayName?.charAt(0) || 'U'}
                 </div>
               )}
-              <span className="text-sm font-medium text-white/80 group-hover/author:text-white transition-colors truncate">
+              <span className="text-sm font-medium text-text-primary/80 group-hover/author:text-text-primary transition-colors truncate">
                 {displayName}
               </span>
               {displayRank && (
@@ -451,7 +451,7 @@ const StyleCard = ({ style, isPreview = false, className = "", authorOverride = 
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleFollow(); }}
                 className={`text-[10px] px-2.5 py-1 rounded-md font-bold transition-all shrink-0 ml-2 ${
                   (authorData?.followers?.includes(currentUser.uid) || authorOverride?.followers?.includes(currentUser.uid))
-                    ? 'bg-white/10 text-white/60 hover:bg-white/20'
+                    ? 'bg-text-primary/10 text-text-primary/60 hover:bg-text-primary/20'
                     : 'bg-accent-cyan/20 text-accent-cyan hover:bg-accent-cyan/30 border border-accent-cyan/30'
                 }`}
               >
@@ -477,11 +477,11 @@ const StyleCard = ({ style, isPreview = false, className = "", authorOverride = 
             </button>
             <button
               onClick={handleDownloadClick}
-              className={`flex items-center gap-1 hover:text-white transition-colors ${hasDownloaded ? 'text-white' : ''}`}
+              className={`flex items-center gap-1 hover:text-text-primary transition-colors ${hasDownloaded ? 'text-text-primary' : ''}`}
             >
               <Download size={14} /> {localStyle.downloadsCount}
             </button>
-            <span className="flex items-center gap-1 hover:text-white transition-colors cursor-default" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
+            <span className="flex items-center gap-1 hover:text-text-primary transition-colors cursor-default" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
               <Eye size={14} /> {localStyle.viewsCount}
             </span>
           </div>
@@ -495,7 +495,7 @@ const StyleCard = ({ style, isPreview = false, className = "", authorOverride = 
             </button>
             <button
               onClick={handleSave}
-              className={`p-1.5 rounded transition-colors ${hasSaved ? 'text-white bg-white/10 hover:bg-white/20' : 'hover:bg-primary-surface hover:text-white'}`}
+              className={`p-1.5 rounded transition-colors ${hasSaved ? 'text-text-primary bg-text-primary/10 hover:bg-text-primary/20' : 'hover:bg-primary-surface hover:text-text-primary'}`}
               title={hasSaved ? "Remove from Wishlist" : "Save to Wishlist"}
             >
               <Bookmark size={16} className={hasSaved ? "fill-white" : ""} />
@@ -521,7 +521,7 @@ const StyleCard = ({ style, isPreview = false, className = "", authorOverride = 
           >
             <button
               onClick={() => setShowAuthorModal(false)}
-              className="absolute top-4 right-4 text-text-muted hover:text-white transition-colors"
+              className="absolute top-4 right-4 text-text-muted hover:text-text-primary transition-colors"
             >
               <X size={20} />
             </button>
@@ -530,11 +530,11 @@ const StyleCard = ({ style, isPreview = false, className = "", authorOverride = 
               {displayPhoto ? (
                 <img src={displayPhoto} alt={displayUsername} className="w-20 h-20 rounded-full border-4 border-primary-border mb-4 object-cover" />
               ) : (
-                <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-accent-purple to-accent-cyan flex items-center justify-center text-2xl font-bold text-white mb-4 shadow-lg shadow-accent-purple/20">
+                <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-accent-purple to-accent-cyan flex items-center justify-center text-2xl font-bold text-text-primary mb-4 shadow-lg shadow-accent-purple/20">
                   {displayName?.charAt(0) || 'U'}
                 </div>
               )}
-              <h3 className="text-xl font-bold text-white mb-1">{displayName}</h3>
+              <h3 className="text-xl font-bold text-text-primary mb-1">{displayName}</h3>
               <p className="text-sm text-text-muted mb-4">@{displayUsername}</p>
 
               {isLoadingAuthor ? (
@@ -544,19 +544,19 @@ const StyleCard = ({ style, isPreview = false, className = "", authorOverride = 
               ) : (
                 <div className="w-full">
                   <div className="grid grid-cols-2 gap-3 mb-6">
-                    <div className="bg-white/5 rounded-xl p-3 border border-white/5">
+                    <div className="bg-text-primary/5 rounded-xl p-3 border border-text-primary/5">
                       <p className="text-xs text-text-muted mb-1">Followers</p>
-                      <p className="text-lg font-bold text-white">{authorData?.followers?.length || 0}</p>
+                      <p className="text-lg font-bold text-text-primary">{authorData?.followers?.length || 0}</p>
                     </div>
-                    <div className="bg-white/5 rounded-xl p-3 border border-white/5">
+                    <div className="bg-text-primary/5 rounded-xl p-3 border border-text-primary/5">
                       <p className="text-xs text-text-muted mb-1">Total Likes</p>
                       <p className="text-lg font-bold text-accent-pink">{authorStats?.totalLikes || 0}</p>
                     </div>
-                    <div className="bg-white/5 rounded-xl p-3 border border-white/5">
+                    <div className="bg-text-primary/5 rounded-xl p-3 border border-text-primary/5">
                       <p className="text-xs text-text-muted mb-1">Total Views</p>
                       <p className="text-lg font-bold text-accent-cyan">{authorStats?.totalViews || 0}</p>
                     </div>
-                    <div className="bg-white/5 rounded-xl p-3 border border-white/5">
+                    <div className="bg-text-primary/5 rounded-xl p-3 border border-text-primary/5">
                       <p className="text-xs text-text-muted mb-1">Downloads</p>
                       <p className="text-lg font-bold text-accent-purple">{authorStats?.totalDownloads || 0}</p>
                     </div>
@@ -566,7 +566,7 @@ const StyleCard = ({ style, isPreview = false, className = "", authorOverride = 
                     {currentUser?.uid !== style.authorId && (
                       <button
                         onClick={handleFollow}
-                        className={`flex-1 py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-all ${authorData?.followers?.includes(currentUser?.uid) ? 'bg-white/10 text-white hover:bg-white/20 border border-white/10' : 'bg-gradient-to-r from-accent-purple to-accent-cyan text-white hover:opacity-90'}`}
+                        className={`flex-1 py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-all ${authorData?.followers?.includes(currentUser?.uid) ? 'bg-text-primary/10 text-text-primary hover:bg-text-primary/20 border border-text-primary/10' : 'bg-gradient-to-r from-accent-purple to-accent-cyan text-text-primary hover:opacity-90'}`}
                       >
                         {authorData?.followers?.includes(currentUser?.uid) ? (
                           <><UserMinus size={16} /> Unfollow</>
@@ -577,7 +577,7 @@ const StyleCard = ({ style, isPreview = false, className = "", authorOverride = 
                     )}
                     <Link
                       to={`/profile/${displayUsername}`}
-                      className="flex-1 py-2.5 rounded-xl font-bold border border-primary-border bg-white/5 text-white hover:bg-white/10 transition-colors flex items-center justify-center"
+                      className="flex-1 py-2.5 rounded-xl font-bold border border-primary-border bg-text-primary/5 text-text-primary hover:bg-text-primary/10 transition-colors flex items-center justify-center"
                     >
                       View Profile
                     </Link>
@@ -601,7 +601,7 @@ const StyleCard = ({ style, isPreview = false, className = "", authorOverride = 
               <h3 className="text-xl font-bold">Delete Style</h3>
             </div>
 
-            <p className="text-white/70 mb-4">
+            <p className="text-text-primary/70 mb-4">
               Are you sure you want to delete <strong>{style.title}</strong>? This action cannot be undone.
             </p>
 
@@ -609,25 +609,25 @@ const StyleCard = ({ style, isPreview = false, className = "", authorOverride = 
               {renderCardContent(true)}
             </div>
 
-            <div className="bg-white/5 rounded-xl p-4 mb-6">
-              <p className="text-sm text-white/50 mb-2">You will lose the following metrics forever:</p>
+            <div className="bg-text-primary/5 rounded-xl p-4 mb-6">
+              <p className="text-sm text-text-primary/50 mb-2">You will lose the following metrics forever:</p>
               <div className="flex flex-wrap gap-4">
                 <div className="flex items-center gap-1 text-accent-pink"><Heart size={14} /> {localStyle.likesCount} Likes</div>
-                <div className="flex items-center gap-1 text-white"><Download size={14} /> {localStyle.downloadsCount} Downloads</div>
-                <div className="flex items-center gap-1 text-white/70"><Eye size={14} /> {localStyle.viewsCount} Views</div>
+                <div className="flex items-center gap-1 text-text-primary"><Download size={14} /> {localStyle.downloadsCount} Downloads</div>
+                <div className="flex items-center gap-1 text-text-primary/70"><Eye size={14} /> {localStyle.viewsCount} Views</div>
               </div>
             </div>
 
             <div className="flex justify-end gap-3">
               <button
                 onClick={cancelDelete}
-                className="px-4 py-2 rounded-lg font-bold text-white/70 hover:text-white hover:bg-white/10 transition-colors"
+                className="px-4 py-2 rounded-lg font-bold text-text-primary/70 hover:text-text-primary hover:bg-text-primary/10 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={confirmDelete}
-                className="px-4 py-2 rounded-lg font-bold bg-red-500 hover:bg-red-600 text-white transition-colors flex items-center gap-2"
+                className="px-4 py-2 rounded-lg font-bold bg-red-500 hover:bg-red-600 text-text-primary transition-colors flex items-center gap-2"
               >
                 <Trash2 size={16} /> Yes, Delete
               </button>

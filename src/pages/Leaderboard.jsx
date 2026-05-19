@@ -63,20 +63,20 @@ const Leaderboard = () => {
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 mb-6 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
             <Trophy size={16} /> <span className="font-bold text-sm tracking-widest uppercase">Global Rankings</span>
           </div>
-          <h2 className="text-5xl md:text-6xl font-heading font-bold mb-6 text-white tracking-tight">Hall of <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-600">Fame</span></h2>
-          <p className="text-white/50 text-lg max-w-2xl mx-auto font-medium leading-relaxed">
+          <h2 className="text-5xl md:text-6xl font-heading font-bold mb-6 text-text-primary tracking-tight">Hall of <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-600">Fame</span></h2>
+          <p className="text-text-primary/50 text-lg max-w-2xl mx-auto font-medium leading-relaxed">
             Discover the most active and appreciated CSS developers shaping the future of UI design. Rankings are driven by community engagement.
           </p>
         </div>
 
         {loading ? (
           <div className="max-w-4xl mx-auto flex flex-col items-center justify-center py-20">
-            <div className="w-12 h-12 rounded-full border-4 border-white/10 border-t-amber-500 animate-spin mb-4"></div>
-            <p className="text-white/50 font-medium">Calculating global rankings...</p>
+            <div className="w-12 h-12 rounded-full border-4 border-text-primary/10 border-t-amber-500 animate-spin mb-4"></div>
+            <p className="text-text-primary/50 font-medium">Calculating global rankings...</p>
           </div>
         ) : topUsers.length === 0 ? (
-          <div className="max-w-4xl mx-auto bg-white/[0.02] border border-white/5 rounded-3xl p-12 text-center backdrop-blur-xl">
-            <p className="text-white/40 text-lg">The arena is empty. Be the first to claim a spot!</p>
+          <div className="max-w-4xl mx-auto bg-white/[0.02] border border-text-primary/5 rounded-3xl p-12 text-center backdrop-blur-xl">
+            <p className="text-text-primary/40 text-lg">The arena is empty. Be the first to claim a spot!</p>
           </div>
         ) : (
           <>
@@ -86,7 +86,7 @@ const Leaderboard = () => {
               {/* 2nd Place */}
               {topUsers[1] && (
                 <div className="flex-1 w-full md:w-auto relative order-2 md:order-1 group perspective-1000">
-                  <div className="bg-white/[0.03] border border-white/10 rounded-[2rem] p-6 pt-16 relative transform transition-all duration-500 hover:-translate-y-4 hover:shadow-[0_0_40px_rgba(192,192,192,0.15)] backdrop-blur-xl h-[300px] flex flex-col items-center justify-end">
+                  <div className="bg-white/[0.03] border border-text-primary/10 rounded-[2rem] p-6 pt-16 relative transform transition-all duration-500 hover:-translate-y-4 hover:shadow-[0_0_40px_rgba(192,192,192,0.15)] backdrop-blur-xl h-[300px] flex flex-col items-center justify-end">
                     {/* Crown/Rank Indicator */}
                     <div className="absolute -top-12 left-1/2 -translate-x-1/2 flex flex-col items-center">
                       <div className="bg-gradient-to-b from-[#e2e2e2] to-[#a0a0a0] text-black w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl shadow-[0_5px_15px_rgba(192,192,192,0.4)] mb-3 border-2 border-[#f0f0f0]">2</div>
@@ -95,17 +95,17 @@ const Leaderboard = () => {
                         alt={topUsers[1].displayName} 
                         className="w-24 h-24 rounded-full border-4 border-[#c0c0c0] shadow-2xl"
                         fallbackText={topUsers[1].displayName?.charAt(0) || 'U'}
-                        fallbackClass="w-24 h-24 rounded-full border-4 border-[#c0c0c0] shadow-2xl bg-gradient-to-tr from-gray-600 to-gray-400 flex items-center justify-center text-3xl font-bold text-white"
+                        fallbackClass="w-24 h-24 rounded-full border-4 border-[#c0c0c0] shadow-2xl bg-gradient-to-tr from-gray-600 to-gray-400 flex items-center justify-center text-3xl font-bold text-text-primary"
                       />
                     </div>
                     
-                    <Link to={`/profile/${topUsers[1].username}`} className="font-heading font-bold text-2xl text-white group-hover:text-[#c0c0c0] transition-colors line-clamp-1">{topUsers[1].displayName}</Link>
-                    <div className="text-sm text-white/40 mb-6 font-medium">@{topUsers[1].username}</div>
+                    <Link to={`/profile/${topUsers[1].username}`} className="font-heading font-bold text-2xl text-text-primary group-hover:text-[#c0c0c0] transition-colors line-clamp-1">{topUsers[1].displayName}</Link>
+                    <div className="text-sm text-text-primary/40 mb-6 font-medium">@{topUsers[1].username}</div>
                     
-                    <div className="w-full bg-black/40 rounded-2xl p-4 border border-white/5 flex items-center justify-center gap-2">
+                    <div className="w-full bg-black/40 rounded-2xl p-4 border border-text-primary/5 flex items-center justify-center gap-2">
                       <Zap className="text-[#c0c0c0]" size={20} />
                       <div className="text-[#c0c0c0] font-bold text-2xl">{topUsers[1].rankPoints || 0}</div>
-                      <span className="text-xs text-white/30 font-bold uppercase tracking-wider mt-1">Pts</span>
+                      <span className="text-xs text-text-primary/30 font-bold uppercase tracking-wider mt-1">Pts</span>
                     </div>
                   </div>
                 </div>
@@ -131,11 +131,11 @@ const Leaderboard = () => {
                         alt={topUsers[0].displayName} 
                         className="w-32 h-32 rounded-full border-4 border-amber-400 shadow-[0_0_30px_rgba(245,158,11,0.3)] ring-4 ring-black"
                         fallbackText={topUsers[0].displayName?.charAt(0) || 'U'}
-                        fallbackClass="w-32 h-32 rounded-full border-4 border-amber-400 shadow-[0_0_30px_rgba(245,158,11,0.3)] ring-4 ring-black bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center text-5xl font-bold text-white"
+                        fallbackClass="w-32 h-32 rounded-full border-4 border-amber-400 shadow-[0_0_30px_rgba(245,158,11,0.3)] ring-4 ring-black bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center text-5xl font-bold text-text-primary"
                       />
                     </div>
                     
-                    <Link to={`/profile/${topUsers[0].username}`} className="font-heading font-bold text-3xl text-white group-hover:text-amber-400 transition-colors line-clamp-1">{topUsers[0].displayName}</Link>
+                    <Link to={`/profile/${topUsers[0].username}`} className="font-heading font-bold text-3xl text-text-primary group-hover:text-amber-400 transition-colors line-clamp-1">{topUsers[0].displayName}</Link>
                     <div className="text-sm text-amber-500/60 mb-8 font-medium">@{topUsers[0].username}</div>
                     
                     <div className="w-full bg-amber-500/10 rounded-2xl p-5 border border-amber-500/20 flex items-center justify-center gap-2">
@@ -150,26 +150,26 @@ const Leaderboard = () => {
               {/* 3rd Place */}
               {topUsers[2] && (
                 <div className="flex-1 w-full md:w-auto relative order-3 md:order-3 group perspective-1000">
-                  <div className="bg-white/[0.03] border border-white/10 rounded-[2rem] p-6 pt-16 relative transform transition-all duration-500 hover:-translate-y-4 hover:shadow-[0_0_40px_rgba(205,127,50,0.15)] backdrop-blur-xl h-[280px] flex flex-col items-center justify-end">
+                  <div className="bg-white/[0.03] border border-text-primary/10 rounded-[2rem] p-6 pt-16 relative transform transition-all duration-500 hover:-translate-y-4 hover:shadow-[0_0_40px_rgba(205,127,50,0.15)] backdrop-blur-xl h-[280px] flex flex-col items-center justify-end">
                     {/* Crown/Rank Indicator */}
                     <div className="absolute -top-10 left-1/2 -translate-x-1/2 flex flex-col items-center">
-                      <div className="bg-gradient-to-b from-[#e6a15c] to-[#a05a2c] text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl shadow-[0_5px_15px_rgba(205,127,50,0.4)] mb-3 border-2 border-[#f0c399]">3</div>
+                      <div className="bg-gradient-to-b from-[#e6a15c] to-[#a05a2c] text-text-primary w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl shadow-[0_5px_15px_rgba(205,127,50,0.4)] mb-3 border-2 border-[#f0c399]">3</div>
                       <Avatar 
                         src={topUsers[2].photoURL} 
                         alt={topUsers[2].displayName} 
                         className="w-20 h-20 rounded-full border-4 border-[#cd7f32] shadow-2xl"
                         fallbackText={topUsers[2].displayName?.charAt(0) || 'U'}
-                        fallbackClass="w-20 h-20 rounded-full border-4 border-[#cd7f32] shadow-2xl bg-gradient-to-tr from-[#a05a2c] to-[#e6a15c] flex items-center justify-center text-3xl font-bold text-white"
+                        fallbackClass="w-20 h-20 rounded-full border-4 border-[#cd7f32] shadow-2xl bg-gradient-to-tr from-[#a05a2c] to-[#e6a15c] flex items-center justify-center text-3xl font-bold text-text-primary"
                       />
                     </div>
                     
-                    <Link to={`/profile/${topUsers[2].username}`} className="font-heading font-bold text-xl text-white group-hover:text-[#cd7f32] transition-colors line-clamp-1">{topUsers[2].displayName}</Link>
-                    <div className="text-sm text-white/40 mb-6 font-medium">@{topUsers[2].username}</div>
+                    <Link to={`/profile/${topUsers[2].username}`} className="font-heading font-bold text-xl text-text-primary group-hover:text-[#cd7f32] transition-colors line-clamp-1">{topUsers[2].displayName}</Link>
+                    <div className="text-sm text-text-primary/40 mb-6 font-medium">@{topUsers[2].username}</div>
                     
-                    <div className="w-full bg-black/40 rounded-2xl p-4 border border-white/5 flex items-center justify-center gap-2">
+                    <div className="w-full bg-black/40 rounded-2xl p-4 border border-text-primary/5 flex items-center justify-center gap-2">
                       <Zap className="text-[#cd7f32]" size={18} />
                       <div className="text-[#cd7f32] font-bold text-xl">{topUsers[2].rankPoints || 0}</div>
-                      <span className="text-xs text-white/30 font-bold uppercase tracking-wider mt-1">Pts</span>
+                      <span className="text-xs text-text-primary/30 font-bold uppercase tracking-wider mt-1">Pts</span>
                     </div>
                   </div>
                 </div>
@@ -179,8 +179,8 @@ const Leaderboard = () => {
             {/* List for 4th and Below */}
             {topUsers.length > 3 && (
               <div className="max-w-4xl mx-auto">
-                <div className="bg-white/[0.02] border border-white/5 rounded-[2rem] p-2 backdrop-blur-xl shadow-2xl">
-                  <div className="hidden sm:grid grid-cols-12 gap-4 px-6 py-4 text-xs font-bold text-white/30 uppercase tracking-wider border-b border-white/5">
+                <div className="bg-white/[0.02] border border-text-primary/5 rounded-[2rem] p-2 backdrop-blur-xl shadow-2xl">
+                  <div className="hidden sm:grid grid-cols-12 gap-4 px-6 py-4 text-xs font-bold text-text-primary/30 uppercase tracking-wider border-b border-text-primary/5">
                     <div className="col-span-1 text-center">Rank</div>
                     <div className="col-span-6">Developer</div>
                     <div className="col-span-2 text-center">Tier</div>
@@ -198,42 +198,42 @@ const Leaderboard = () => {
                         <div className="absolute left-0 top-0 bottom-0 w-1 bg-accent-cyan opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         
                         <div className="col-span-1 text-center hidden sm:block">
-                          <span className="text-lg font-bold text-white/20 group-hover:text-white/40 transition-colors">
+                          <span className="text-lg font-bold text-text-primary/20 group-hover:text-text-primary/40 transition-colors">
                             {index + 4}
                           </span>
                         </div>
                         
                         <div className="col-span-1 sm:col-span-6 flex items-center gap-4">
-                          <div className="sm:hidden text-lg font-bold text-white/20 w-6 text-center">
+                          <div className="sm:hidden text-lg font-bold text-text-primary/20 w-6 text-center">
                             {index + 4}
                           </div>
                           <Avatar 
                             src={user.photoURL} 
                             alt={user.displayName} 
-                            className="w-12 h-12 rounded-full border border-white/10 group-hover:border-accent-cyan/50 transition-colors"
+                            className="w-12 h-12 rounded-full border border-text-primary/10 group-hover:border-accent-cyan/50 transition-colors"
                             fallbackText={user.displayName?.charAt(0) || 'U'}
-                            fallbackClass="w-12 h-12 rounded-full border border-white/10 bg-gradient-to-tr from-accent-purple to-accent-cyan flex items-center justify-center text-sm font-bold text-white"
+                            fallbackClass="w-12 h-12 rounded-full border border-text-primary/10 bg-gradient-to-tr from-accent-purple to-accent-cyan flex items-center justify-center text-sm font-bold text-text-primary"
                           />
                           <div>
-                            <div className="font-bold text-white/90 group-hover:text-white transition-colors text-lg">
+                            <div className="font-bold text-text-primary/90 group-hover:text-text-primary transition-colors text-lg">
                               {user.displayName}
                             </div>
-                            <div className="text-sm text-white/40">@{user.username}</div>
+                            <div className="text-sm text-text-primary/40">@{user.username}</div>
                           </div>
                         </div>
                         
                         <div className="col-span-1 sm:col-span-2 flex justify-start sm:justify-center">
-                          <div className="inline-flex items-center gap-1.5 bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg text-xs font-bold capitalize text-white/70 group-hover:bg-white/10 group-hover:text-white transition-colors">
+                          <div className="inline-flex items-center gap-1.5 bg-text-primary/5 border border-text-primary/10 px-3 py-1.5 rounded-lg text-xs font-bold capitalize text-text-primary/70 group-hover:bg-text-primary/10 group-hover:text-text-primary transition-colors">
                             <span className="text-sm">{getRankBadge(user.rankTier)}</span>
                             {user.rankTier || 'Bronze'}
                           </div>
                         </div>
                         
                         <div className="col-span-1 sm:col-span-3 flex items-center justify-start sm:justify-end gap-2">
-                          <div className="text-xl font-bold text-white/80 group-hover:text-white transition-colors">
+                          <div className="text-xl font-bold text-text-primary/80 group-hover:text-text-primary transition-colors">
                             {user.rankPoints || 0}
                           </div>
-                          <span className="text-xs font-bold text-white/30 uppercase tracking-wider mt-1">Pts</span>
+                          <span className="text-xs font-bold text-text-primary/30 uppercase tracking-wider mt-1">Pts</span>
                         </div>
                       </Link>
                     ))}

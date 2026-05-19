@@ -41,11 +41,11 @@ const Explore = () => {
             <h3 className="font-heading font-bold text-lg flex items-center gap-2">
               <Filter size={18} /> Filters
             </h3>
-            <button className="text-xs text-text-muted hover:text-white">Clear All</button>
+            <button className="text-xs text-text-muted hover:text-text-primary">Clear All</button>
           </div>
           
           <div className="mb-6">
-            <h4 className="text-sm font-medium text-white mb-3">Sort By</h4>
+            <h4 className="text-sm font-medium text-text-primary mb-3">Sort By</h4>
             <select className="w-full bg-primary-surface border border-primary-border rounded-lg px-3 py-2 text-sm text-text-muted focus:border-accent-cyan focus:outline-none">
               <option>Most Liked</option>
               <option>Most Downloaded</option>
@@ -55,27 +55,27 @@ const Explore = () => {
           </div>
           
           <div className="mb-6">
-            <h4 className="text-sm font-medium text-white mb-3">Category</h4>
+            <h4 className="text-sm font-medium text-text-primary mb-3">Category</h4>
             <div className="space-y-2 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
               {categories.map(cat => (
                 <label key={cat} className="flex items-center gap-2 cursor-pointer group">
                   <input type="checkbox" className="w-4 h-4 rounded border-primary-border bg-primary-bg text-accent-purple focus:ring-accent-purple/50 focus:ring-offset-primary-bg" />
-                  <span className="text-sm text-text-muted group-hover:text-white transition-colors">{cat}</span>
+                  <span className="text-sm text-text-muted group-hover:text-text-primary transition-colors">{cat}</span>
                 </label>
               ))}
             </div>
           </div>
           
           <div className="mb-6">
-            <h4 className="text-sm font-medium text-white mb-3">Type</h4>
+            <h4 className="text-sm font-medium text-text-primary mb-3">Type</h4>
             <div className="space-y-2">
               <label className="flex items-center gap-2 cursor-pointer group">
                 <input type="checkbox" className="w-4 h-4 rounded border-primary-border bg-primary-bg text-accent-purple" />
-                <span className="text-sm text-text-muted group-hover:text-white">Pure CSS</span>
+                <span className="text-sm text-text-muted group-hover:text-text-primary">Pure CSS</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer group">
                 <input type="checkbox" className="w-4 h-4 rounded border-primary-border bg-primary-bg text-accent-purple" />
-                <span className="text-sm text-text-muted group-hover:text-white">CSS + HTML</span>
+                <span className="text-sm text-text-muted group-hover:text-text-primary">CSS + HTML</span>
               </label>
             </div>
           </div>
@@ -97,13 +97,13 @@ const Explore = () => {
             <div className="flex bg-primary-surface rounded-lg border border-primary-border p-1">
               <button 
                 onClick={() => setViewMode('grid')}
-                className={`p-1.5 rounded ${viewMode === 'grid' ? 'bg-primary-border text-white' : 'text-text-muted hover:text-white'}`}
+                className={`p-1.5 rounded ${viewMode === 'grid' ? 'bg-primary-border text-text-primary' : 'text-text-muted hover:text-text-primary'}`}
               >
                 <Grid size={16} />
               </button>
               <button 
                 onClick={() => setViewMode('list')}
-                className={`p-1.5 rounded ${viewMode === 'list' ? 'bg-primary-border text-white' : 'text-text-muted hover:text-white'}`}
+                className={`p-1.5 rounded ${viewMode === 'list' ? 'bg-primary-border text-text-primary' : 'text-text-muted hover:text-text-primary'}`}
               >
                 <List size={16} />
               </button>
@@ -120,7 +120,7 @@ const Explore = () => {
         ) : styles.length === 0 ? (
           <div className="card p-12 text-center flex flex-col items-center justify-center">
             <div className="text-6xl text-text-muted mb-4">{'{ }'}</div>
-            <h3 className="text-xl font-heading font-bold mb-2 text-white">No styles found</h3>
+            <h3 className="text-xl font-heading font-bold mb-2 text-text-primary">No styles found</h3>
             <p className="text-text-muted">Be the first to upload a style!</p>
           </div>
         ) : (

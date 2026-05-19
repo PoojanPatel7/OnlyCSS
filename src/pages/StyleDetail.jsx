@@ -247,9 +247,9 @@ const StyleDetail = () => {
     <div className="container mx-auto px-4 py-8">
       {/* Breadcrumb */}
       <div className="text-sm text-text-muted mb-6">
-        <Link to="/" className="hover:text-white">Home</Link> <span className="mx-2">&gt;</span> 
-        <Link to="/explore" className="hover:text-white">{style.category}</Link> <span className="mx-2">&gt;</span> 
-        <span className="text-white">{style.title}</span>
+        <Link to="/" className="hover:text-text-primary">Home</Link> <span className="mx-2">&gt;</span> 
+        <Link to="/explore" className="hover:text-text-primary">{style.category}</Link> <span className="mx-2">&gt;</span> 
+        <span className="text-text-primary">{style.title}</span>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 mb-12">
@@ -280,7 +280,7 @@ const StyleDetail = () => {
               {style.authorPhotoURL ? (
                 <img src={style.authorPhotoURL} alt="Author" className="w-10 h-10 rounded-full" />
               ) : (
-                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-accent-purple to-accent-cyan flex items-center justify-center text-sm font-bold text-white">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-accent-purple to-accent-cyan flex items-center justify-center text-sm font-bold text-text-primary">
                   {style.authorDisplayName?.charAt(0) || 'U'}
                 </div>
               )}
@@ -299,7 +299,7 @@ const StyleDetail = () => {
               {(!currentUser || currentUser.uid !== style.authorId) && (
                 <button 
                   onClick={handleFollow}
-                  className={`ml-auto flex items-center gap-1.5 py-1.5 px-4 text-xs font-bold transition-all rounded-full border ${isFollowing ? 'bg-white/10 text-white border-white/20 hover:bg-white/5' : 'bg-transparent text-accent-cyan border-accent-cyan hover:bg-accent-cyan/10'}`}
+                  className={`ml-auto flex items-center gap-1.5 py-1.5 px-4 text-xs font-bold transition-all rounded-full border ${isFollowing ? 'bg-text-primary/10 text-text-primary border-text-primary/20 hover:bg-text-primary/5' : 'bg-transparent text-accent-cyan border-accent-cyan hover:bg-accent-cyan/10'}`}
                 >
                   {isFollowing ? <><UserCheck size={14} /> Following</> : <><UserPlus size={14} /> Follow</>}
                 </button>
@@ -321,19 +321,19 @@ const StyleDetail = () => {
 
             <div className="grid grid-cols-4 gap-4 mb-8 text-center border-y border-primary-border py-4">
               <div>
-                <div className="text-xl font-bold text-white mb-1">{style.likesCount || 0}</div>
+                <div className="text-xl font-bold text-text-primary mb-1">{style.likesCount || 0}</div>
                 <div className="text-xs text-text-muted uppercase tracking-wider">Likes</div>
               </div>
               <div>
-                <div className="text-xl font-bold text-white mb-1">{style.downloadsCount || 0}</div>
+                <div className="text-xl font-bold text-text-primary mb-1">{style.downloadsCount || 0}</div>
                 <div className="text-xs text-text-muted uppercase tracking-wider">Downs</div>
               </div>
               <div>
-                <div className="text-xl font-bold text-white mb-1">{style.viewsCount || 0}</div>
+                <div className="text-xl font-bold text-text-primary mb-1">{style.viewsCount || 0}</div>
                 <div className="text-xs text-text-muted uppercase tracking-wider">Views</div>
               </div>
               <div>
-                <div className="text-xl font-bold text-white mb-1">0</div>
+                <div className="text-xl font-bold text-text-primary mb-1">0</div>
                 <div className="text-xs text-text-muted uppercase tracking-wider">Comms</div>
               </div>
             </div>
@@ -362,7 +362,7 @@ const StyleDetail = () => {
               </button>
               <button 
                 onClick={handleDownload}
-                className={`flex items-center justify-center gap-2 ${hasDownloaded ? 'bg-white/80 text-black' : 'bg-white text-black hover:bg-gray-200'} transition-colors py-3 rounded-lg font-medium`}
+                className={`flex items-center justify-center gap-2 ${hasDownloaded ? 'bg-text-primary/80 text-black' : 'bg-white text-black hover:bg-gray-200'} transition-colors py-3 rounded-lg font-medium`}
               >
                 <Download size={18} /> {hasDownloaded ? 'Downloaded' : 'Download'}
               </button>
@@ -378,7 +378,7 @@ const StyleDetail = () => {
             <Code className="text-accent-cyan" /> Implementation
           </h3>
           <div className="flex gap-2">
-            <button className="text-sm text-text-muted hover:text-white flex items-center gap-1"><Share2 size={14}/> Share</button>
+            <button className="text-sm text-text-muted hover:text-text-primary flex items-center gap-1"><Share2 size={14}/> Share</button>
             <button className="text-sm text-text-muted hover:text-status-danger flex items-center gap-1"><AlertTriangle size={14}/> Report</button>
           </div>
         </div>
@@ -388,7 +388,7 @@ const StyleDetail = () => {
             {style.isCombined ? (
               <button 
                 onClick={() => setActiveTab('combined')}
-                className={`px-6 py-4 text-sm font-medium flex items-center gap-2 whitespace-nowrap ${activeTab === 'combined' ? 'text-accent-purple border-b-2 border-accent-purple bg-white/5' : 'text-text-muted hover:text-white'}`}
+                className={`px-6 py-4 text-sm font-medium flex items-center gap-2 whitespace-nowrap ${activeTab === 'combined' ? 'text-accent-purple border-b-2 border-accent-purple bg-text-primary/5' : 'text-text-muted hover:text-text-primary'}`}
               >
                 <FileCode2 size={16} /> Combined (HTML+CSS+JS)
               </button>
@@ -396,20 +396,20 @@ const StyleDetail = () => {
               <>
                 <button 
                   onClick={() => setActiveTab('html')}
-                  className={`px-6 py-4 text-sm font-medium flex items-center gap-2 whitespace-nowrap ${activeTab === 'html' ? 'text-accent-pink border-b-2 border-accent-pink bg-white/5' : 'text-text-muted hover:text-white'}`}
+                  className={`px-6 py-4 text-sm font-medium flex items-center gap-2 whitespace-nowrap ${activeTab === 'html' ? 'text-accent-pink border-b-2 border-accent-pink bg-text-primary/5' : 'text-text-muted hover:text-text-primary'}`}
                 >
                   <Layers size={16} /> HTML
                 </button>
                 <button 
                   onClick={() => setActiveTab('css')}
-                  className={`px-6 py-4 text-sm font-medium flex items-center gap-2 whitespace-nowrap ${activeTab === 'css' ? 'text-accent-cyan border-b-2 border-accent-cyan bg-white/5' : 'text-text-muted hover:text-white'}`}
+                  className={`px-6 py-4 text-sm font-medium flex items-center gap-2 whitespace-nowrap ${activeTab === 'css' ? 'text-accent-cyan border-b-2 border-accent-cyan bg-text-primary/5' : 'text-text-muted hover:text-text-primary'}`}
                 >
                   <Code size={16} /> CSS
                 </button>
                 {style.jsCode && (
                   <button 
                     onClick={() => setActiveTab('js')}
-                    className={`px-6 py-4 text-sm font-medium flex items-center gap-2 whitespace-nowrap ${activeTab === 'js' ? 'text-amber-400 border-b-2 border-amber-400 bg-white/5' : 'text-text-muted hover:text-white'}`}
+                    className={`px-6 py-4 text-sm font-medium flex items-center gap-2 whitespace-nowrap ${activeTab === 'js' ? 'text-amber-400 border-b-2 border-amber-400 bg-text-primary/5' : 'text-text-muted hover:text-text-primary'}`}
                   >
                     <FileCode2 size={16} /> JavaScript
                   </button>
@@ -418,7 +418,7 @@ const StyleDetail = () => {
             )}
             
             <button 
-              className="ml-auto px-6 py-4 text-sm font-medium text-text-muted hover:text-white flex items-center gap-2 border-l border-primary-border whitespace-nowrap"
+              className="ml-auto px-6 py-4 text-sm font-medium text-text-muted hover:text-text-primary flex items-center gap-2 border-l border-primary-border whitespace-nowrap"
               onClick={() => handleCopy(
                 activeTab === 'combined' ? style.combinedCode : 
                 activeTab === 'css' ? style.cssCode : 

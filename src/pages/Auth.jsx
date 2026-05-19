@@ -48,7 +48,7 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex w-full bg-[#050508] text-white relative overflow-hidden font-sans">
+    <div className="min-h-screen flex w-full bg-[#050508] text-text-primary relative overflow-hidden font-sans">
       {/* Background Animated Gradients */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-accent-purple/20 blur-[120px] animate-pulse-slow"></div>
@@ -58,13 +58,13 @@ const Auth = () => {
       </div>
 
       {/* Left Panel: Artistic CSS Showcase */}
-      <div className="hidden lg:flex flex-col justify-between w-1/2 p-14 relative z-10 border-r border-white/5 bg-black/30 backdrop-blur-3xl">
+      <div className="hidden lg:flex flex-col justify-between w-1/2 p-14 relative z-10 border-r border-text-primary/5 bg-black/30 backdrop-blur-3xl">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-purple to-accent-cyan flex items-center justify-center shadow-lg shadow-accent-purple/20">
             <span className="font-bold text-xl">{'{'}</span>
           </div>
           <span className="text-2xl font-heading font-bold tracking-wide">
-            Only<span className="text-white/50 font-normal">CSS</span>
+            Only<span className="text-text-primary/50 font-normal">CSS</span>
           </span>
         </div>
 
@@ -72,33 +72,33 @@ const Auth = () => {
           {/* Floating UI Elements */}
           <div className="relative w-full h-full perspective-1000 flex items-center justify-center">
             {/* Main Center Card */}
-            <div className="absolute w-72 h-80 bg-white/[0.03] border border-white/10 rounded-3xl backdrop-blur-md p-6 shadow-2xl shadow-black/80 transform -rotate-3 hover:rotate-0 transition-transform duration-700 animate-float z-20">
+            <div className="absolute w-72 h-80 bg-white/[0.03] border border-text-primary/10 rounded-3xl backdrop-blur-md p-6 shadow-2xl shadow-black/80 transform -rotate-3 hover:rotate-0 transition-transform duration-700 animate-float z-20">
               <div className="flex gap-2 mb-8">
                 <div className="w-3 h-3 rounded-full bg-[#FF5F56]"></div>
                 <div className="w-3 h-3 rounded-full bg-[#FFBD2E]"></div>
                 <div className="w-3 h-3 rounded-full bg-[#27C93F]"></div>
               </div>
               <div className="space-y-4">
-                <div className="h-4 w-3/4 bg-white/10 rounded-md"></div>
-                <div className="h-4 w-1/2 bg-white/10 rounded-md"></div>
-                <div className="h-4 w-5/6 bg-white/10 rounded-md"></div>
+                <div className="h-4 w-3/4 bg-text-primary/10 rounded-md"></div>
+                <div className="h-4 w-1/2 bg-text-primary/10 rounded-md"></div>
+                <div className="h-4 w-5/6 bg-text-primary/10 rounded-md"></div>
                 
-                <div className="mt-8 pt-8 border-t border-white/10">
+                <div className="mt-8 pt-8 border-t border-text-primary/10">
                   <div className="w-full h-12 rounded-xl bg-gradient-to-r from-accent-purple to-accent-cyan opacity-80 shadow-[0_0_20px_rgba(124,58,237,0.3)] animate-pulse-slow"></div>
                 </div>
               </div>
             </div>
             
             {/* Top Right Float */}
-            <div className="absolute top-16 right-0 p-5 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-xl animate-float-delayed shadow-xl z-30 transform rotate-6">
+            <div className="absolute top-16 right-0 p-5 bg-text-primary/5 border border-text-primary/10 rounded-2xl backdrop-blur-xl animate-float-delayed shadow-xl z-30 transform rotate-6">
               <Code2 className="text-accent-cyan mb-3" size={28} />
-              <p className="text-sm font-medium text-white/90">Pristine CSS</p>
+              <p className="text-sm font-medium text-text-primary/90">Pristine CSS</p>
             </div>
             
             {/* Bottom Left Float */}
-            <div className="absolute bottom-16 left-4 p-5 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-xl animate-float shadow-xl z-10 transform -rotate-12" style={{ animationDelay: '1.5s' }}>
+            <div className="absolute bottom-16 left-4 p-5 bg-text-primary/5 border border-text-primary/10 rounded-2xl backdrop-blur-xl animate-float shadow-xl z-10 transform -rotate-12" style={{ animationDelay: '1.5s' }}>
               <Sparkles className="text-accent-pink mb-3" size={28} />
-              <p className="text-sm font-medium text-white/90">Pixel Perfect</p>
+              <p className="text-sm font-medium text-text-primary/90">Pixel Perfect</p>
             </div>
           </div>
         </div>
@@ -107,7 +107,7 @@ const Auth = () => {
           <h1 className="text-5xl font-heading font-bold mb-5 leading-tight tracking-tight">
             Elevate your <br/> UI development.
           </h1>
-          <p className="text-white/60 text-lg max-w-md font-medium leading-relaxed">
+          <p className="text-text-primary/60 text-lg max-w-md font-medium leading-relaxed">
             Join the premier community for frontend developers. Discover, share, and implement beautiful CSS into your projects seamlessly.
           </p>
         </div>
@@ -122,18 +122,18 @@ const Auth = () => {
               <span className="font-bold text-xl">{'{'}</span>
             </div>
             <span className="text-2xl font-heading font-bold tracking-wide">
-              Only<span className="text-white/50 font-normal">CSS</span>
+              Only<span className="text-text-primary/50 font-normal">CSS</span>
             </span>
           </div>
 
-          <div className="bg-white/[0.03] border border-white/10 rounded-[2rem] p-8 sm:p-10 shadow-2xl backdrop-blur-2xl relative overflow-hidden group">
+          <div className="bg-white/[0.03] border border-text-primary/10 rounded-[2rem] p-8 sm:p-10 shadow-2xl backdrop-blur-2xl relative overflow-hidden group">
             {/* Subtle top highlight */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-[1px] bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-[1px] bg-gradient-to-r from-transparent via-text-primary/30 to-transparent"></div>
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-heading font-bold mb-3 text-white tracking-tight">
+              <h2 className="text-3xl font-heading font-bold mb-3 text-text-primary tracking-tight">
                 {isLogin ? 'Welcome Back' : 'Create Account'}
               </h2>
-              <p className="text-white/50 text-sm font-medium">
+              <p className="text-text-primary/50 text-sm font-medium">
                 {isLogin ? 'Sign in to continue to OnlyCSS' : 'Join the OnlyCSS community'}
               </p>
             </div>
@@ -152,7 +152,7 @@ const Auth = () => {
                   placeholder="Email address"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:border-accent-purple focus:outline-none transition-colors"
+                  className="w-full bg-black/20 border border-text-primary/10 rounded-xl px-4 py-3 text-text-primary placeholder-text-primary/30 focus:border-accent-purple focus:outline-none transition-colors"
                   required
                 />
               </div>
@@ -162,30 +162,30 @@ const Auth = () => {
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:border-accent-purple focus:outline-none transition-colors"
+                  className="w-full bg-black/20 border border-text-primary/10 rounded-xl px-4 py-3 text-text-primary placeholder-text-primary/30 focus:border-accent-purple focus:outline-none transition-colors"
                   required
                 />
               </div>
               <button 
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 mt-2 rounded-xl bg-gradient-to-r from-accent-purple to-accent-cyan font-medium text-white shadow-lg shadow-accent-purple/20 hover:shadow-accent-cyan/40 transition-all duration-300"
+                className="w-full py-3 mt-2 rounded-xl bg-gradient-to-r from-accent-purple to-accent-cyan font-medium text-text-primary shadow-lg shadow-accent-purple/20 hover:shadow-accent-cyan/40 transition-all duration-300"
               >
                 {loading ? 'Processing...' : (isLogin ? 'Sign In' : 'Sign Up')}
               </button>
             </form>
 
             <div className="flex items-center gap-4 mb-6">
-              <div className="h-px bg-white/10 flex-1"></div>
-              <span className="text-xs text-white/40 uppercase tracking-widest font-medium">Or</span>
-              <div className="h-px bg-white/10 flex-1"></div>
+              <div className="h-px bg-text-primary/10 flex-1"></div>
+              <span className="text-xs text-text-primary/40 uppercase tracking-widest font-medium">Or</span>
+              <div className="h-px bg-text-primary/10 flex-1"></div>
             </div>
 
             <button 
               onClick={handleGoogleLogin} 
               type="button"
               disabled={loading}
-              className="relative w-full group/btn flex items-center justify-center gap-3 py-3 px-6 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 disabled:opacity-50 overflow-hidden shadow-lg"
+              className="relative w-full group/btn flex items-center justify-center gap-3 py-3 px-6 rounded-xl bg-text-primary/5 border border-text-primary/10 hover:bg-text-primary/10 hover:border-text-primary/20 transition-all duration-300 disabled:opacity-50 overflow-hidden shadow-lg"
             >
               <div className="w-5 h-5 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
                 <svg viewBox="0 0 24 24" width="12" height="12" xmlns="http://www.w3.org/2000/svg">
@@ -197,23 +197,23 @@ const Auth = () => {
                   </g>
                 </svg>
               </div>
-              <span className="font-medium text-white/90 text-sm">Continue with Google</span>
+              <span className="font-medium text-text-primary/90 text-sm">Continue with Google</span>
             </button>
 
             <div className="mt-6 text-center">
               <button 
                 type="button" 
                 onClick={() => setIsLogin(!isLogin)}
-                className="text-sm text-white/60 hover:text-white transition-colors"
+                className="text-sm text-text-primary/60 hover:text-text-primary transition-colors"
               >
                 {isLogin ? "Don't have an account? Sign Up" : "Already have an account? Sign In"}
               </button>
             </div>
 
-            <div className="mt-8 pt-6 border-t border-white/5 flex flex-col sm:flex-row justify-center items-center gap-4 text-xs text-white/40">
-              <a href="#" className="hover:text-white/80 transition-colors">Terms of Service</a>
+            <div className="mt-8 pt-6 border-t border-text-primary/5 flex flex-col sm:flex-row justify-center items-center gap-4 text-xs text-text-primary/40">
+              <a href="#" className="hover:text-text-primary/80 transition-colors">Terms of Service</a>
               <span className="hidden sm:inline">•</span>
-              <a href="#" className="hover:text-white/80 transition-colors">Privacy Policy</a>
+              <a href="#" className="hover:text-text-primary/80 transition-colors">Privacy Policy</a>
             </div>
           </div>
         </div>
