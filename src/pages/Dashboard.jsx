@@ -1,15 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { db } from '../firebase/config';
-import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
-import { LayoutDashboard, Heart, Settings, Plus, Eye, Download, Activity, Trash2, Edit, Layers } from 'lucide-react';
+import { collection, query, where, getDocs, orderBy, onSnapshot, getDoc, doc } from 'firebase/firestore';
+import { Plus, Eye, Download, Heart, Edit, Trash2, Code, RefreshCw, Trophy, Zap, Shield, ChevronRight } from 'lucide-react';
+import DashboardSidebar from '../components/layout/DashboardSidebar';
+import StyleCard from '../components/StyleCard';
+import { recalculateAllUserPoints } from '../utils/points';
 
 const Dashboard = () => {
   const { currentUser, userData } = useAuth();
   const navigate = useNavigate();
+  
   const [styles, setStyles] = useState([]);
+  const [userCache, setUserCache] = useState({});
+  const cacheRef = useRef({});
   const [loading, setLoading] = useState(true);
+  const [isSyncing, setIsSyncing] = useState(false);
 
   useEffect(() => {
     if (!currentUser) {
@@ -17,181 +24,193 @@ const Dashboard = () => {
       return;
     }
 
-    const fetchMyStyles = async () => {
-      try {
-        const q = query(
-          collection(db, 'styles'), 
-          where('authorId', '==', currentUser.uid),
-          orderBy('publishedAt', 'desc')
-        );
-        const querySnapshot = await getDocs(q);
-        setStyles(querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-      } catch (err) {
-        console.error("Error fetching styles:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+    const q = query(
+      collection(db, 'styles'), 
+      where('authorId', '==', currentUser.uid)
+    );
+    
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const stylesData = querySnapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      // Sort locally to avoid requiring a composite index in Firestore
+      stylesData.sort((a, b) => (b.publishedAt?.toMillis() || 0) - (a.publishedAt?.toMillis() || 0));
+      setStyles(stylesData);
+      setLoading(false);
+      
+      const uids = new Set();
+      stylesData.forEach(s => {
+         (s.likedBy || []).forEach(uid => uids.add(uid));
+         (s.viewedBy || []).forEach(uid => uids.add(uid));
+         (s.downloadedBy || []).forEach(uid => uids.add(uid));
+         (s.savedBy || []).forEach(uid => uids.add(uid));
+      });
+      
+      Array.from(uids).forEach(uid => {
+        if (!cacheRef.current[uid]) {
+          cacheRef.current[uid] = '...'; // mark as fetching
+          setUserCache(prev => ({ ...prev, [uid]: '...' }));
+          
+          getDoc(doc(db, 'users', uid)).then(snap => {
+            const name = snap.exists() ? (snap.data().displayName || snap.data().username || 'Unknown') : 'Unknown';
+            cacheRef.current[uid] = name;
+            setUserCache(prev => ({ ...prev, [uid]: name }));
+          }).catch(err => {
+            cacheRef.current[uid] = 'Unknown';
+            setUserCache(prev => ({ ...prev, [uid]: 'Unknown' }));
+          });
+        }
+      });
+    }, (err) => {
+      console.error("Error fetching live styles:", err);
+      setLoading(false);
+    });
 
-    fetchMyStyles();
+    return () => unsubscribe();
   }, [currentUser, navigate]);
 
   if (!currentUser) return null;
 
+  const totalViews = styles.reduce((acc, curr) => acc + (curr.viewsCount || 0), 0);
+  const totalLikes = styles.reduce((acc, curr) => acc + (curr.likesCount || 0), 0);
+  const totalDownloads = styles.reduce((acc, curr) => acc + (curr.downloadsCount || 0), 0);
+  const userRank = userData?.rankTier || 'Bronze';
+  const userPoints = userData?.rankPoints || 0;
+
   return (
-    <div className="container mx-auto px-4 py-8 flex flex-col lg:flex-row gap-8">
-      {/* Sidebar */}
-      <div className="w-full lg:w-64 flex-shrink-0 border-r border-primary-border lg:pr-6 min-h-[calc(100vh-10rem)]">
-        <h3 className="font-heading font-bold text-lg mb-6 flex items-center gap-2">
-          <LayoutDashboard size={20} className="text-accent-cyan" /> Dashboard
-        </h3>
+    <div className="min-h-screen bg-[#050508] relative font-sans pb-20 overflow-hidden">
+      {/* Dynamic Background Gradients */}
+      <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-accent-purple/10 via-transparent to-transparent pointer-events-none opacity-50 z-0"></div>
+      <div className="absolute top-[10%] left-[5%] w-[40%] h-[40%] rounded-full bg-accent-purple/5 blur-[150px] animate-pulse-slow pointer-events-none z-0"></div>
+      <div className="absolute bottom-[20%] right-[10%] w-[50%] h-[50%] rounded-full bg-accent-cyan/5 blur-[150px] pointer-events-none z-0" style={{ animationDelay: '2s' }}></div>
+
+      <div className="container mx-auto px-4 py-12 flex flex-col lg:flex-row gap-8 relative z-10">
+        <DashboardSidebar />
         
-        <div className="mb-8 p-4 bg-primary-surface rounded-xl border border-primary-border flex items-center gap-3">
-          {userData?.photoURL ? (
-            <img src={userData.photoURL} alt="Avatar" className="w-10 h-10 rounded-full" />
-          ) : (
-            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-accent-purple to-accent-cyan flex items-center justify-center text-sm font-bold text-white">
-              {userData?.displayName?.charAt(0) || 'U'}
+        {/* Main Content Area */}
+        <div className="flex-grow flex flex-col gap-8 min-w-0">
+          
+          {/* Welcome Hero Panel */}
+          <div className="relative bg-white/[0.02] border border-white/5 rounded-[2rem] p-8 sm:p-10 backdrop-blur-xl shadow-2xl overflow-hidden group">
+            <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-gradient-to-br from-accent-cyan/20 to-accent-purple/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 group-hover:scale-110 transition-transform duration-700"></div>
+            
+            <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+              <div>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-white/70 mb-4">
+                  <Shield size={14} className="text-accent-cyan" /> Creator Dashboard
+                </div>
+                <h2 className="text-4xl md:text-5xl font-heading font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-white/60 mb-3">
+                  Welcome back,<br/>{userData?.displayName || 'Creator'}
+                </h2>
+                <p className="text-white/50 max-w-md text-lg">
+                  Manage your styles, track your influence, and climb the global leaderboards.
+                </p>
+              </div>
+
+              {/* Rank Badge */}
+              <div className="flex flex-col items-center justify-center p-6 rounded-2xl bg-gradient-to-br from-white/5 to-white/[0.01] border border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.5)] shrink-0 min-w-[180px]">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-accent-purple to-accent-cyan p-[2px] mb-3 relative group-hover:shadow-[0_0_20px_rgba(139,92,246,0.5)] transition-shadow">
+                  <div className="w-full h-full bg-[#050508] rounded-full flex items-center justify-center">
+                    <Trophy size={28} className="text-amber-400" />
+                  </div>
+                </div>
+                <div className="text-2xl font-black text-white capitalize tracking-wide">{userRank}</div>
+                <div className="text-accent-cyan font-bold flex items-center gap-1 mt-1">
+                  <Zap size={14} /> {userPoints.toLocaleString()} PTS
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Action Bar */}
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <h3 className="text-2xl font-heading font-bold text-white flex items-center gap-2">
+              <Code size={24} className="text-accent-purple" /> Published Styles
+            </h3>
+            <Link to="/upload" className="w-full sm:w-auto bg-gradient-to-r from-accent-purple to-accent-cyan text-white py-3 px-6 rounded-xl font-bold flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:shadow-[0_0_30px_rgba(139,92,246,0.5)] hover:scale-[1.02] transition-all">
+              <Plus size={18} /> Create New Style
+            </Link>
+          </div>
+
+          {/* Stats Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { label: 'Total Styles', value: styles.length, icon: <Code size={20} />, color: 'from-blue-500/20 to-cyan-500/20', text: 'text-cyan-400' },
+              { label: 'Total Views', value: totalViews, icon: <Eye size={20} />, color: 'from-emerald-500/20 to-green-500/20', text: 'text-emerald-400' },
+              { label: 'Total Likes', value: totalLikes, icon: <Heart size={20} />, color: 'from-pink-500/20 to-rose-500/20', text: 'text-pink-400' },
+              { label: 'Downloads', value: totalDownloads, icon: <Download size={20} />, color: 'from-purple-500/20 to-indigo-500/20', text: 'text-purple-400' }
+            ].map((stat, i) => (
+              <div key={i} className="bg-white/[0.02] border border-white/5 rounded-[1.5rem] p-6 backdrop-blur-xl shadow-lg relative overflow-hidden group hover:bg-white/[0.04] transition-colors cursor-default">
+                <div className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${stat.color} rounded-full blur-[30px] -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-500`}></div>
+                
+                <div className={`w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mb-4 ${stat.text}`}>
+                  {stat.icon}
+                </div>
+                <div className="text-white/40 text-xs font-bold uppercase tracking-wider mb-1">{stat.label}</div>
+                <div className="text-3xl font-black text-white tracking-tight">{stat.value.toLocaleString()}</div>
+              </div>
+            ))}
+          </div>
+          
+          {/* Grid of Styles */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {loading ? (
+              <div className="col-span-full py-32 flex flex-col items-center justify-center text-center">
+                <div className="w-12 h-12 rounded-full border-4 border-white/10 border-t-accent-cyan animate-spin mb-6"></div>
+                <h3 className="text-xl font-bold text-white mb-2">Loading Studio...</h3>
+                <span className="text-white/40">Fetching your creative assets</span>
+              </div>
+            ) : styles.length === 0 ? (
+              <div className="col-span-full bg-gradient-to-b from-white/[0.05] to-transparent border border-white/10 rounded-[2rem] p-16 text-center backdrop-blur-xl shadow-2xl relative overflow-hidden group">
+                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5 mix-blend-overlay"></div>
+                <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-accent-purple/20 to-accent-cyan/20 border border-white/10 mx-auto flex items-center justify-center mb-8 relative">
+                  <div className="absolute inset-0 bg-accent-cyan/20 blur-[20px] rounded-full animate-pulse-slow"></div>
+                  <span className="text-5xl relative z-10">✨</span>
+                </div>
+                <h3 className="text-3xl font-heading font-black text-white mb-3">Your Canvas is Empty</h3>
+                <p className="text-white/50 mb-10 max-w-md mx-auto text-lg leading-relaxed">
+                  Every great creator starts somewhere. Upload your very first CSS component and share your magic with the world.
+                </p>
+                <Link to="/upload" className="btn-primary py-4 px-10 rounded-2xl inline-flex items-center gap-3 text-lg font-bold shadow-[0_0_30px_rgba(139,92,246,0.3)] hover:scale-105 transition-transform">
+                  <Plus size={24} /> Create Magic Now
+                </Link>
+              </div>
+            ) : (
+              styles.map((style) => (
+                <StyleCard key={style.id} style={style} authorOverride={userData} />
+              ))
+            )}
+          </div>
+
+          {/* Admin Tools Section */}
+          {currentUser && (
+            <div className="mt-8 pt-8 border-t border-white/5">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-6 rounded-2xl bg-white/[0.01] border border-white/5">
+                <div>
+                  <h4 className="text-white font-bold mb-1 flex items-center gap-2"><Shield size={16} className="text-text-muted"/> System Tools</h4>
+                  <p className="text-white/40 text-sm">Manually synchronize the global database points and ranks.</p>
+                </div>
+                <button 
+                  onClick={async () => {
+                    setIsSyncing(true);
+                    try {
+                      const count = await recalculateAllUserPoints();
+                      alert(`Successfully synced points for ${count} users based on their existing followers and styles!`);
+                      window.location.reload();
+                    } catch(e) {
+                      alert("Error syncing points: " + e.message);
+                    } finally {
+                      setIsSyncing(false);
+                    }
+                  }}
+                  disabled={isSyncing}
+                  className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 text-white/60 hover:text-white transition-all font-bold text-sm w-full sm:w-auto"
+                >
+                  <RefreshCw size={16} className={isSyncing ? "animate-spin" : ""} />
+                  {isSyncing ? "Syncing..." : "Sync Historical Points"}
+                </button>
+              </div>
             </div>
           )}
-          <div>
-            <p className="text-white font-medium text-sm">{userData?.displayName}</p>
-            <p className="text-text-muted text-xs">@{userData?.username}</p>
-          </div>
-        </div>
-
-        <ul className="space-y-1">
-          <li>
-            <Link to="/dashboard" className="flex items-center gap-3 px-4 py-2 bg-white/5 text-accent-cyan rounded-lg font-medium">
-              <Layers size={18} /> My Styles
-            </Link>
-          </li>
-          <li>
-            <Link to="/wishlist" className="flex items-center gap-3 px-4 py-2 text-text-muted hover:text-white hover:bg-white/5 rounded-lg transition-colors">
-              <Heart size={18} /> Wishlist
-            </Link>
-          </li>
-          <li>
-            <a href="#" className="flex items-center gap-3 px-4 py-2 text-text-muted hover:text-white hover:bg-white/5 rounded-lg transition-colors">
-              <Activity size={18} /> Analytics
-            </a>
-          </li>
-          <li>
-            <a href="#" className="flex items-center gap-3 px-4 py-2 text-text-muted hover:text-white hover:bg-white/5 rounded-lg transition-colors mt-4">
-              <Settings size={18} /> Settings
-            </a>
-          </li>
-        </ul>
-      </div>
-      
-      {/* Main Content */}
-      <div className="flex-grow">
-        <div className="flex justify-between items-end mb-8">
-          <div>
-            <h2 className="text-3xl font-heading font-bold mb-2">My Styles</h2>
-            <p className="text-text-muted">Manage your published and draft styles.</p>
-          </div>
-          <Link to="/upload" className="btn-primary flex items-center gap-2">
-            <Plus size={18} /> Upload New
-          </Link>
-        </div>
-
-        {/* Stats Row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="card p-4">
-            <div className="text-text-muted text-sm mb-1">Total Styles</div>
-            <div className="text-2xl font-bold text-white">{styles.length}</div>
-          </div>
-          <div className="card p-4">
-            <div className="text-text-muted text-sm mb-1">Total Views</div>
-            <div className="text-2xl font-bold text-white">
-              {styles.reduce((acc, curr) => acc + (curr.viewsCount || 0), 0)}
-            </div>
-          </div>
-          <div className="card p-4">
-            <div className="text-text-muted text-sm mb-1">Total Likes</div>
-            <div className="text-2xl font-bold text-white">
-              {styles.reduce((acc, curr) => acc + (curr.likesCount || 0), 0)}
-            </div>
-          </div>
-          <div className="card p-4">
-            <div className="text-text-muted text-sm mb-1">Total Downloads</div>
-            <div className="text-2xl font-bold text-white">
-              {styles.reduce((acc, curr) => acc + (curr.downloadsCount || 0), 0)}
-            </div>
-          </div>
-        </div>
-        
-        {/* Table */}
-        <div className="card overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-primary-surface border-b border-primary-border">
-                  <th className="py-3 px-6 text-text-muted font-medium text-sm">Style</th>
-                  <th className="py-3 px-6 text-text-muted font-medium text-sm">Category</th>
-                  <th className="py-3 px-6 text-text-muted font-medium text-sm">Stats</th>
-                  <th className="py-3 px-6 text-text-muted font-medium text-sm">Status</th>
-                  <th className="py-3 px-6 text-text-muted font-medium text-sm text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-primary-border">
-                {loading ? (
-                  <tr>
-                    <td colSpan="5" className="py-8 text-center text-text-muted">Loading your styles...</td>
-                  </tr>
-                ) : styles.length === 0 ? (
-                  <tr>
-                    <td colSpan="5" className="py-12 text-center">
-                      <div className="text-4xl mb-3">🎨</div>
-                      <p className="text-text-muted mb-4">You haven't uploaded any styles yet.</p>
-                      <Link to="/upload" className="btn-outline">Upload Your First Style</Link>
-                    </td>
-                  </tr>
-                ) : (
-                  styles.map((style) => (
-                    <tr key={style.id} className="hover:bg-white/5 transition-colors group">
-                      <td className="py-4 px-6">
-                        <Link to={`/style/${style.id}`} className="font-medium text-white hover:text-accent-cyan transition-colors">
-                          {style.title}
-                        </Link>
-                        <div className="text-xs text-text-muted mt-1">
-                          {new Date(style.publishedAt?.toMillis() || Date.now()).toLocaleDateString()}
-                        </div>
-                      </td>
-                      <td className="py-4 px-6">
-                        <span className="px-2 py-1 rounded bg-primary-surface border border-primary-border text-xs text-text-muted">
-                          {style.category}
-                        </span>
-                      </td>
-                      <td className="py-4 px-6">
-                        <div className="flex gap-3 text-xs text-text-muted">
-                          <span className="flex items-center gap-1"><Heart size={12} /> {style.likesCount || 0}</span>
-                          <span className="flex items-center gap-1"><Eye size={12} /> {style.viewsCount || 0}</span>
-                          <span className="flex items-center gap-1"><Download size={12} /> {style.downloadsCount || 0}</span>
-                        </div>
-                      </td>
-                      <td className="py-4 px-6">
-                        <span className={`px-2 py-1 rounded text-xs font-medium ${style.status === 'published' ? 'bg-status-success/10 text-status-success' : 'bg-status-warning/10 text-status-warning'}`}>
-                          {style.status === 'published' ? 'Live' : 'Draft'}
-                        </span>
-                      </td>
-                      <td className="py-4 px-6 text-right">
-                        <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button className="p-2 text-text-muted hover:text-accent-cyan hover:bg-primary-surface rounded transition-colors" title="Edit">
-                            <Edit size={16} />
-                          </button>
-                          <button className="p-2 text-text-muted hover:text-status-danger hover:bg-primary-surface rounded transition-colors" title="Delete">
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+          
         </div>
       </div>
     </div>

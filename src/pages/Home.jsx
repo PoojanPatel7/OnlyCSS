@@ -17,6 +17,7 @@ const Home = () => {
   const [featuredStyles, setFeaturedStyles] = useState([]);
   const [trendingStyles, setTrendingStyles] = useState([]);
   const [newStyles, setNewStyles] = useState([]);
+  const [topUsers, setTopUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -38,6 +39,13 @@ const Home = () => {
         const newQ = query(stylesRef, orderBy('publishedAt', 'desc'), limit(8));
         const newSnap = await getDocs(newQ);
         setNewStyles(newSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+
+        // Fetch Top Developers
+        const usersRef = collection(db, 'users');
+        const usersQ = query(usersRef, orderBy('rankPoints', 'desc'), limit(10));
+        const usersSnap = await getDocs(usersQ);
+        setTopUsers(usersSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+        
       } catch (err) {
         console.error("Error fetching home data:", err);
       } finally {
@@ -225,35 +233,37 @@ const Home = () => {
           </div>
           
           <div className="flex gap-6 overflow-x-auto pb-6 custom-scrollbar">
-            {/* Mock Top Developers */}
-            {[
-              {name: 'Alex Rivera', handle: 'arivera', rank: 'diamond', points: '34.2K', styles: 142},
-              {name: 'Sarah Chen', handle: 'schen_css', rank: 'platinum', points: '18.5K', styles: 89},
-              {name: 'Devin Scott', handle: 'dscott', rank: 'gold', points: '12.1K', styles: 64},
-              {name: 'Maria Garcia', handle: 'mgarcia', rank: 'gold', points: '9.8K', styles: 42},
-              {name: 'Tom Wilson', handle: 'twilson', rank: 'silver', points: '5.4K', styles: 28},
-              {name: 'Lisa Wang', handle: 'lwang', rank: 'silver', points: '4.2K', styles: 19}
-            ].map((dev, i) => (
-              <div key={i} className="min-w-[250px] card p-6 text-center hover:border-accent-purple/50 transition-colors">
-                <div className="relative inline-block mb-4">
-                  <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-tr from-accent-purple to-accent-cyan p-1">
-                    <div className="w-full h-full bg-primary-bg rounded-full flex items-center justify-center text-2xl font-bold">
-                      {dev.name.charAt(0)}
+            {topUsers.length > 0 ? (
+              topUsers.map((dev, i) => (
+                <div key={i} className="min-w-[250px] card p-6 text-center hover:border-accent-purple/50 transition-colors">
+                  <div className="relative inline-block mb-4">
+                    {dev.photoURL ? (
+                      <img src={dev.photoURL} alt={dev.displayName} className="w-20 h-20 mx-auto rounded-full object-cover border-4 border-primary-border" />
+                    ) : (
+                      <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-tr from-accent-purple to-accent-cyan p-1">
+                        <div className="w-full h-full bg-primary-bg rounded-full flex items-center justify-center text-2xl font-bold">
+                          {dev.displayName?.charAt(0) || 'U'}
+                        </div>
+                      </div>
+                    )}
+                    <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-primary-bg flex items-center justify-center text-xl shadow-lg border border-primary-border">
+                      {dev.rankTier === 'diamond' ? '💠' : dev.rankTier === 'platinum' ? '💎' : dev.rankTier === 'gold' ? '🥇' : '🥈'}
                     </div>
                   </div>
-                  <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-primary-bg flex items-center justify-center text-xl">
-                    {dev.rank === 'diamond' ? '💠' : dev.rank === 'platinum' ? '💎' : dev.rank === 'gold' ? '🥇' : '🥈'}
+                  <h4 className="font-heading font-bold text-lg mb-1">{dev.displayName}</h4>
+                  <p className="text-sm text-text-muted mb-4">@{dev.username}</p>
+                  <div className="flex justify-between text-xs text-text-muted border-t border-primary-border pt-4 mb-4">
+                    <div><span className="text-white font-bold block">{dev.rankPoints || 0}</span>Pts</div>
+                    <div><span className="text-white font-bold block">{dev.stylesCount || 0}</span>Styles</div>
                   </div>
+                  <button className="w-full btn-outline py-1.5 text-xs">Follow</button>
                 </div>
-                <h4 className="font-heading font-bold text-lg mb-1">{dev.name}</h4>
-                <p className="text-sm text-text-muted mb-4">@{dev.handle}</p>
-                <div className="flex justify-between text-xs text-text-muted border-t border-primary-border pt-4 mb-4">
-                  <div><span className="text-white font-bold block">{dev.points}</span>Pts</div>
-                  <div><span className="text-white font-bold block">{dev.styles}</span>Styles</div>
-                </div>
-                <button className="w-full btn-outline py-1.5 text-xs">Follow</button>
+              ))
+            ) : (
+              <div className="text-text-muted py-8 text-center border border-dashed border-primary-border rounded-xl w-full">
+                Leaderboard is currently empty.
               </div>
-            ))}
+            )}
           </div>
         </div>
       </section>

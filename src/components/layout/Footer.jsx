@@ -55,7 +55,7 @@ const Footer = () => {
         
         <div className="pt-8 border-t border-primary-border flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-text-muted">
-            © {new Date().getFullYear()} CSSVault. Made with ❤️ by the CSS community.
+            © {new Date().getFullYear()} OnlyCSS. Made with ❤️ by the CSS community.
           </p>
           <div className="flex gap-4">
             <a href="#" className="text-xs text-text-muted hover:text-white">Privacy Policy</a>

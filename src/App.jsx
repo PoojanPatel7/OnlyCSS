@@ -9,6 +9,8 @@ import Profile from './pages/Profile';
 import Dashboard from './pages/Dashboard';
 import Wishlist from './pages/Wishlist';
 import Leaderboard from './pages/Leaderboard';
+import Analytics from './pages/Analytics';
+import Settings from './pages/Settings';
 
 function App() {
   return (
@@ -23,6 +25,8 @@ function App() {
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="wishlist" element={<Wishlist />} />
           <Route path="leaderboard" element={<Leaderboard />} />
+          <Route path="analytics" element={<Analytics />} />
+          <Route path="settings" element={<Settings />} />
         </Route>
         <Route path="/auth" element={<Auth />} />
       </Routes>
