@@ -72,4 +72,16 @@
   .glass {
     @apply bg-primary-surface/60 backdrop-blur-md border border-white/5;
   }
+  
+  @keyframes rgb-lights {
+    0% { color: var(--accent-cyan); text-shadow: 0 0 10px rgba(6, 182, 212, 0.6), 0 0 20px rgba(6, 182, 212, 0.4); }
+    33% { color: var(--accent-purple); text-shadow: 0 0 10px rgba(124, 58, 237, 0.6), 0 0 20px rgba(124, 58, 237, 0.4); }
+    66% { color: var(--accent-pink); text-shadow: 0 0 10px rgba(236, 72, 153, 0.6), 0 0 20px rgba(236, 72, 153, 0.4); }
+    100% { color: var(--accent-cyan); text-shadow: 0 0 10px rgba(6, 182, 212, 0.6), 0 0 20px rgba(6, 182, 212, 0.4); }
+  }
+
+  .animate-rgb-lights {
+    animation: rgb-lights 4s linear infinite;
+    font-weight: 700 !important;
+  }
 }

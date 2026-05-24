@@ -21,7 +21,7 @@ const DashboardSidebar = () => {
         <div className="flex items-center gap-4 relative z-10">
           <div className="w-14 h-14 rounded-full p-0.5 bg-gradient-to-tr from-accent-purple to-accent-cyan relative shrink-0">
             {userData?.photoURL ? (
-              <img src={userData.photoURL} alt="Avatar" className="w-full h-full rounded-full object-cover border-2 border-[#050508]" />
+              <img src={userData.photoURL} alt="Avatar" referrerPolicy="no-referrer" className="w-full h-full rounded-full object-cover border-2 border-[#050508]" />
             ) : (
               <div className="w-full h-full rounded-full bg-[#050508] border-2 border-[#050508] flex items-center justify-center text-lg font-bold text-text-primary">
                 {userData?.displayName?.charAt(0) || 'U'}

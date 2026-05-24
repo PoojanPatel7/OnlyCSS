@@ -286,7 +286,7 @@ const Settings = () => {
                       <div className="absolute -inset-1 bg-gradient-to-tr from-accent-purple to-accent-cyan rounded-full blur opacity-20 transition-opacity duration-300"></div>
                       <div className="w-24 h-24 rounded-full p-1 bg-gradient-to-tr from-accent-purple to-accent-cyan shrink-0 relative z-10">
                         {userData?.photoURL ? (
-                          <img src={userData.photoURL} alt="Avatar" className="w-full h-full rounded-full object-cover border-4 border-[#0a0a0f]" />
+                          <img src={userData.photoURL} alt="Avatar" referrerPolicy="no-referrer" className="w-full h-full rounded-full object-cover border-4 border-[#0a0a0f]" />
                         ) : (
                           <div className="w-full h-full rounded-full bg-[#0a0a0f] border-4 border-[#0a0a0f] flex items-center justify-center text-3xl font-black text-white">
                             {userData?.displayName?.charAt(0) || 'U'}

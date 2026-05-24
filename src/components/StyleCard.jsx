@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Heart, Download, Eye, Bookmark, Copy, Trash2, X, AlertTriangle, Code, UserPlus, UserMinus } from 'lucide-react';
+import { Heart, Download, Eye, Bookmark, Copy, Trash2, Edit3, X, AlertTriangle, Code, UserPlus, UserMinus } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase/config';
 import { doc, updateDoc, increment, arrayUnion, arrayRemove, getDoc, getDocs, query, collection, where } from 'firebase/firestore';
@@ -379,7 +379,16 @@ const StyleCard = ({ style, isPreview = false, className = "", authorOverride = 
 
   if (isDeleted) return null;
 
-  const renderCardContent = (previewMode) => (
+  const renderCardContent = (previewMode) => {
+    const isLightBg = style.previewBgColor === '#ffffff';
+    const badgeClass = isLightBg 
+      ? "bg-white/90 backdrop-blur border-gray-200 text-gray-800 shadow-sm font-bold" 
+      : "bg-black/60 backdrop-blur border-white/10 text-white/70 shadow-lg";
+    const viewCodeClass = isLightBg
+      ? "bg-white/90 backdrop-blur border-gray-200 text-gray-900 shadow-md hover:bg-gray-50"
+      : "bg-black/60 backdrop-blur border-white/10 text-white shadow-lg hover:bg-white/20";
+
+    return (
     <div className={`card group block w-full bg-primary-bg rounded-lg overflow-hidden shadow-lg transition-transform duration-300 hover:shadow-xl ${className}`}>
       {/* Responsive Height Wrapper */}
       <div className="w-full aspect-video sm:aspect-auto sm:h-[280px] flex items-center justify-center relative overflow-hidden border-b border-primary-border">
@@ -390,16 +399,26 @@ const StyleCard = ({ style, isPreview = false, className = "", authorOverride = 
             </div>
           )}
           {currentUser && currentUser.uid === style.authorId && !previewMode && (
-            <button
-              onClick={handleDeleteClick}
-              className="bg-red-500/80 hover:bg-red-500 text-text-primary p-1 rounded backdrop-blur transition-colors shadow-lg"
-              title="Delete Style"
-            >
-              <Trash2 size={12} />
-            </button>
+            <div className="flex gap-2">
+              <Link
+                to={`/edit/${style.id}`}
+                className="bg-accent-purple/80 hover:bg-accent-purple text-text-primary p-1 rounded backdrop-blur transition-colors shadow-lg"
+                title="Edit Style"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Edit3 size={12} />
+              </Link>
+              <button
+                onClick={handleDeleteClick}
+                className="bg-red-500/80 hover:bg-red-500 text-text-primary p-1 rounded backdrop-blur transition-colors shadow-lg"
+                title="Delete Style"
+              >
+                <Trash2 size={12} />
+              </button>
+            </div>
           )}
         </div>
-        <div className="absolute top-3 right-3 bg-primary-surface/80 backdrop-blur text-[10px] text-text-muted px-2 py-1 rounded-full border border-primary-border z-10 truncate max-w-[100px]">
+        <div className={`absolute top-3 right-3 text-[10px] px-2.5 py-1 rounded-full border z-10 truncate max-w-[100px] transition-colors ${badgeClass}`}>
           {style.category}
         </div>
 
@@ -414,7 +433,7 @@ const StyleCard = ({ style, isPreview = false, className = "", authorOverride = 
         {!previewMode && (
           <Link
             to={`/style/${style.id}`}
-            className="absolute bottom-3 right-3 bg-black/60 backdrop-blur border border-text-primary/10 text-text-primary text-xs font-bold py-1.5 px-3 rounded-lg flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-all z-20 hover:bg-text-primary/20 hover:scale-105"
+            className={`absolute bottom-3 right-3 text-xs font-bold py-1.5 px-3 rounded-lg flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-all z-20 hover:scale-105 border ${viewCodeClass}`}
           >
             <Code size={14} /> View Code
           </Link>
@@ -430,7 +449,7 @@ const StyleCard = ({ style, isPreview = false, className = "", authorOverride = 
           <div className="flex items-center justify-between mb-3 w-full">
             <button onClick={handleAuthorClick} className="flex items-center gap-2 group/author w-fit text-left flex-1 min-w-0">
               {displayPhoto ? (
-                <img src={displayPhoto} alt={displayUsername} className="w-6 h-6 rounded-full border border-transparent group-hover/author:border-accent-cyan transition-colors object-cover shrink-0" />
+                <img src={displayPhoto} alt={displayUsername} referrerPolicy="no-referrer" className="w-6 h-6 rounded-full border border-transparent group-hover/author:border-accent-cyan transition-colors object-cover shrink-0" />
               ) : (
                 <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-accent-purple to-accent-cyan flex items-center justify-center text-[10px] font-bold text-text-primary border border-transparent group-hover/author:border-white transition-colors shrink-0">
                   {displayName?.charAt(0) || 'U'}
@@ -505,6 +524,7 @@ const StyleCard = ({ style, isPreview = false, className = "", authorOverride = 
       </div>
     </div>
   );
+  };
 
   if (isPreview) return renderCardContent(true);
 
@@ -528,7 +548,7 @@ const StyleCard = ({ style, isPreview = false, className = "", authorOverride = 
 
             <div className="flex flex-col items-center text-center mt-2">
               {displayPhoto ? (
-                <img src={displayPhoto} alt={displayUsername} className="w-20 h-20 rounded-full border-4 border-primary-border mb-4 object-cover" />
+                <img src={displayPhoto} alt={displayUsername} referrerPolicy="no-referrer" className="w-20 h-20 rounded-full border-4 border-primary-border mb-4 object-cover" />
               ) : (
                 <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-accent-purple to-accent-cyan flex items-center justify-center text-2xl font-bold text-text-primary mb-4 shadow-lg shadow-accent-purple/20">
                   {displayName?.charAt(0) || 'U'}

@@ -15,6 +15,7 @@ const Avatar = ({ src, alt, className, fallbackText, fallbackClass }) => {
       <img 
         src={src} 
         alt={alt} 
+        referrerPolicy="no-referrer"
         className={`${className} object-cover`} 
         onError={() => setError(true)} 
       />
@@ -45,25 +46,30 @@ const Profile = () => {
           
           const stylesQ = query(
             collection(db, 'styles'), 
-            where('authorUsername', '==', username),
-            where('status', '==', 'published')
+            where('authorId', '==', userData.id)
           );
           const unsubStyles = onSnapshot(stylesQ, (snap) => {
-            const stylesData = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            const stylesData = snap.docs
+              .map(doc => ({ id: doc.id, ...doc.data() }))
+              .filter(style => style.status === 'published');
             stylesData.sort((a, b) => (b.publishedAt?.toMillis() || 0) - (a.publishedAt?.toMillis() || 0));
             setUserStyles(stylesData);
           });
           
-          const savedQ = query(collection(db, 'styles'), where('savedBy', 'array-contains', userData.id), where('status', '==', 'published'));
+          const savedQ = query(collection(db, 'styles'), where('savedBy', 'array-contains', userData.id));
           const unsubSaved = onSnapshot(savedQ, (snap) => {
-            const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            const data = snap.docs
+              .map(d => ({ id: d.id, ...d.data() }))
+              .filter(style => style.status === 'published');
             data.sort((a, b) => (b.publishedAt?.toMillis() || 0) - (a.publishedAt?.toMillis() || 0));
             setSavedStyles(data);
           });
 
-          const likedQ = query(collection(db, 'styles'), where('likedBy', 'array-contains', userData.id), where('status', '==', 'published'));
+          const likedQ = query(collection(db, 'styles'), where('likedBy', 'array-contains', userData.id));
           const unsubLiked = onSnapshot(likedQ, (snap) => {
-            const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            const data = snap.docs
+              .map(d => ({ id: d.id, ...d.data() }))
+              .filter(style => style.status === 'published');
             data.sort((a, b) => (b.publishedAt?.toMillis() || 0) - (a.publishedAt?.toMillis() || 0));
             setLikedStyles(data);
           });

@@ -278,7 +278,7 @@ const StyleDetail = () => {
             <h1 className="text-4xl font-heading font-bold mb-4">{style.title}</h1>
             <div className="flex items-center gap-3 mb-6">
               {style.authorPhotoURL ? (
-                <img src={style.authorPhotoURL} alt="Author" className="w-10 h-10 rounded-full" />
+                <img src={style.authorPhotoURL} alt="Author" referrerPolicy="no-referrer" className="w-10 h-10 rounded-full object-cover" />
               ) : (
                 <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-accent-purple to-accent-cyan flex items-center justify-center text-sm font-bold text-text-primary">
                   {style.authorDisplayName?.charAt(0) || 'U'}

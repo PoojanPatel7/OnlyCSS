@@ -34,12 +34,13 @@ export const AuthProvider = ({ children }) => {
             const newUserData = {
               uid: currentUser.uid,
               email: currentUser.email,
-              displayName: currentUser.displayName || 'User',
-              username: 'user_' + currentUser.uid.substring(0, 5),
+              displayName: currentUser.displayName || '',
+              username: '',
               photoURL: currentUser.photoURL || '',
               rankTier: 'bronze',
               rankPoints: 0,
               joinedAt: serverTimestamp(),
+              isProfileComplete: false,
             };
             await setDoc(docRef, newUserData);
             setUserData(newUserData);

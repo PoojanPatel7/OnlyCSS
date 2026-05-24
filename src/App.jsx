@@ -20,6 +20,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path="explore" element={<Explore />} />
           <Route path="upload" element={<Upload />} />
+          <Route path="edit/:id" element={<Upload />} />
           <Route path="style/:id" element={<StyleDetail />} />
           <Route path="profile/:username" element={<Profile />} />
           <Route path="dashboard" element={<Dashboard />} />
