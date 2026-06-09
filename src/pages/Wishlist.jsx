@@ -6,6 +6,7 @@ import { collection, query, where, getDocs, onSnapshot } from 'firebase/firestor
 import StyleCard from '../components/StyleCard';
 import { Heart, Folder, Plus, Lock, Globe, Search, Filter } from 'lucide-react';
 import DashboardSidebar from '../components/layout/DashboardSidebar';
+import AdSlot from '../components/AdSlot';
 
 const Wishlist = () => {
   const { currentUser } = useAuth();
@@ -133,6 +134,8 @@ const Wishlist = () => {
               </div>
             </div>
             
+            <AdSlot format="horizontal" />
+
             {loading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {[1, 2, 3].map(i => (

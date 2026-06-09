@@ -9,6 +9,7 @@ import { javascript } from '@codemirror/lang-javascript';
 import { oneDark } from '@codemirror/theme-one-dark';
 import { Eye, Code, Layers, Heart, Download, Share2, Bookmark, AlertTriangle, FileCode2, UserPlus, UserCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import AdSlot from '../components/AdSlot';
 
 const StyleDetail = () => {
   const { id } = useParams();
@@ -248,7 +249,9 @@ const StyleDetail = () => {
       {/* Breadcrumb */}
       <div className="text-sm text-text-muted mb-6">
         <Link to="/" className="hover:text-text-primary">Home</Link> <span className="mx-2">&gt;</span> 
-        <Link to="/explore" className="hover:text-text-primary">{style.category}</Link> <span className="mx-2">&gt;</span> 
+        <Link to={`/explore?tag=${((style.categories && style.categories[0]) || style.category || '').toLowerCase()}`} className="hover:text-text-primary">
+          {(style.categories && style.categories[0]) || style.category}
+        </Link> <span className="mx-2">&gt;</span> 
         <span className="text-text-primary">{style.title}</span>
       </div>
 
@@ -307,9 +310,11 @@ const StyleDetail = () => {
             </div>
 
             <div className="flex flex-wrap gap-2 mb-6">
-              <span className="px-3 py-1 rounded-full bg-primary-surface border border-primary-border text-xs text-accent-cyan">
-                {style.category}
-              </span>
+              {(style.categories || (style.category ? [style.category] : [])).map(cat => (
+                <Link key={cat} to={`/explore?tag=${cat.toLowerCase()}`} className="px-3 py-1 rounded-full bg-primary-surface border border-primary-border text-xs text-accent-cyan hover:bg-white/5 transition-colors">
+                  {cat}
+                </Link>
+              ))}
               <span className="px-3 py-1 rounded-full bg-primary-surface border border-primary-border text-xs">
                 {style.isCombined ? 'Combined Code' : style.cssType}
               </span>
@@ -370,6 +375,8 @@ const StyleDetail = () => {
           </div>
         </div>
       </div>
+
+      <AdSlot format="horizontal" className="mb-12" />
 
       {/* Code Section */}
       <div className="mb-12">

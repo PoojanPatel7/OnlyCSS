@@ -7,6 +7,7 @@ import { Plus, Eye, Download, Heart, Edit, Trash2, Code, RefreshCw, Trophy, Zap,
 import DashboardSidebar from '../components/layout/DashboardSidebar';
 import StyleCard from '../components/StyleCard';
 import { recalculateAllUserPoints } from '../utils/points';
+import AdSlot from '../components/AdSlot';
 
 const Dashboard = () => {
   const { currentUser, userData } = useAuth();
@@ -119,6 +120,8 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
+
+          <AdSlot format="horizontal" />
 
           {/* Action Bar */}
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">

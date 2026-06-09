@@ -4,17 +4,47 @@
 
 @layer base {
   :root {
-    --bg-primary: #0a0a0f;
-    --bg-surface: #111118;
-    --bg-card: #16161f;
-    --border-color: #2a2a3a;
+    --bg-primary: #050508;
+    --bg-surface: #0a0a0f;
+    --bg-card: #111118;
+    --border-color: rgba(255, 255, 255, 0.1);
     
-    --accent-purple: #7c3aed;
-    --accent-cyan: #06b6d4;
-    --accent-pink: #ec4899;
+    --accent-purple: #8b5cf6;
+    --accent-cyan: #22d3ee;
+    --accent-pink: #f472b6;
     
-    --text-primary: #f1f5f9;
-    --text-muted: #64748b;
+    --text-primary: #ffffff;
+    --text-muted: #94a3b8;
+
+    /* Obsidian Editorial Design System */
+    --oe-bg-base:            #080809;
+    --oe-bg-surface:         #0f0f12;
+    --oe-bg-elevated:        #16161b;
+    --oe-bg-hover:           #1c1c22;
+
+    --oe-border-subtle:      rgba(255, 255, 255, 0.06);
+    --oe-border-default:     rgba(255, 255, 255, 0.10);
+    --oe-border-strong:      rgba(255, 255, 255, 0.18);
+
+    --oe-text-primary:       #f2f2f4;
+    --oe-text-secondary:     #9898a6;
+    --oe-text-tertiary:      #5a5a6e;
+
+    --oe-accent-blue:        #4f8eff;
+    --oe-accent-blue-muted:  rgba(79, 142, 255, 0.12);
+    --oe-accent-emerald:     #34d399;
+    --oe-accent-emerald-muted: rgba(52, 211, 153, 0.10);
+    --oe-accent-rose:        #fb7185;
+    --oe-accent-rose-muted:  rgba(251, 113, 133, 0.10);
+    --oe-accent-amber:       #fbbf24;
+    --oe-accent-amber-muted: rgba(251, 191, 36, 0.10);
+    --oe-accent-violet:      #a78bfa;
+    --oe-accent-violet-muted: rgba(167, 139, 250, 0.10);
+
+    /* Obsidian Editorial font stacks */
+    --font-serif: 'Instrument Serif', serif;
+    --font-sans:  'DM Sans', sans-serif;
+    --font-mono:  'Geist Mono', monospace;
   }
   
   html, body {
@@ -70,7 +100,15 @@
   }
   
   .glass {
-    @apply bg-primary-surface/60 backdrop-blur-md border border-white/5;
+    @apply bg-[#0a0a0f]/60 backdrop-blur-xl border border-white/10;
+  }
+  
+  .glass-pro {
+    @apply bg-gradient-to-br from-white/[0.05] to-transparent backdrop-blur-2xl border border-white/[0.08] shadow-[0_8px_32px_0_rgba(0,0,0,0.3)];
+  }
+  
+  .shimmer-bg {
+    @apply relative overflow-hidden before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2.5s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent;
   }
   
   @keyframes rgb-lights {
@@ -84,4 +122,29 @@
     animation: rgb-lights 4s linear infinite;
     font-weight: 700 !important;
   }
+}
+
+/* Obsidian Editorial — Keyframe Animations */
+@keyframes oe-slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes oe-growBar {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+
+@keyframes oe-skeletonShimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes oe-pulseDot {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.3; }
+}
+
+@keyframes oe-engagementBarGrow {
+  from { width: 0%; }
 }

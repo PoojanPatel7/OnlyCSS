@@ -1,12 +1,13 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Search, Plus, Bell, LogOut, LayoutDashboard, Heart, User as UserIcon, Download, UserPlus, Heart as HeartIcon, Bookmark, Sparkles, ChevronDown, Settings as SettingsIcon, AlertTriangle, X, Hash, Code2, ArrowRight, Command } from 'lucide-react';
+import { Search, Plus, Bell, LogOut, LayoutDashboard, Heart, User as UserIcon, Download, UserPlus, Heart as HeartIcon, Bookmark, Sparkles, ChevronDown, Settings as SettingsIcon, AlertTriangle, X, Hash, Code2, ArrowRight, Command, Menu } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useState, useEffect, useRef } from 'react';
 import { db } from '../../firebase/config';
 import { collection, query, where, orderBy, limit, onSnapshot, doc, updateDoc, getDocs } from 'firebase/firestore';
+import { CATEGORIES } from '../../constants/categories';
 
 const Header = () => {
-  const { currentUser, userData, logout } = useAuth();
+  const { currentUser, userData, logout, authError } = useAuth();
   const location = useLocation();
   const [showDropdown, setShowDropdown] = useState(false);
   const [showTagsDropdown, setShowTagsDropdown] = useState(false);
@@ -15,6 +16,7 @@ const Header = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [imageError, setImageError] = useState(false);
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   
   // Search State
   const [showSearch, setShowSearch] = useState(false);
@@ -65,10 +67,15 @@ const Header = () => {
     setIsSearching(true);
     const timer = setTimeout(() => {
       const lowerQ = searchQuery.toLowerCase();
-      const ALL_TAGS = ["Animations", "Buttons", "Typography", "Cards", "Gradients", "Hover Effects", "Loaders", "Navigation", "Backgrounds", "Glassmorphism", "Neumorphism", "Shapes", "Responsive", "Cursors", "Forms", "Transforms"];
       
-      const tags = ALL_TAGS.filter(t => t.toLowerCase().includes(lowerQ)).slice(0, 4);
-      const styles = allStyles.filter(s => s.title?.toLowerCase().includes(lowerQ) || s.tags?.some(t => t.toLowerCase().includes(lowerQ))).slice(0, 4);
+      const tags = CATEGORIES.filter(t => t.toLowerCase().includes(lowerQ)).slice(0, 4);
+      const styles = allStyles.filter(s => {
+        if (s.title?.toLowerCase().includes(lowerQ)) return true;
+        if (s.tags?.some(t => t.toLowerCase().includes(lowerQ))) return true;
+        if (s.categories && Array.isArray(s.categories) && s.categories.some(c => c.toLowerCase().includes(lowerQ))) return true;
+        if (s.category && s.category.toLowerCase().includes(lowerQ)) return true;
+        return false;
+      }).slice(0, 4);
       const users = allUsers.filter(u => u.username?.toLowerCase().includes(lowerQ) || u.displayName?.toLowerCase().includes(lowerQ)).slice(0, 3);
       
       setSearchResults({ tags, styles, users });
@@ -178,6 +185,11 @@ const Header = () => {
 
   return (
     <>
+      {authError && (
+        <div className="w-full bg-red-600 text-white font-bold p-4 text-center z-[100] relative">
+          DATABASE ERROR: {authError}. Please screenshot this and send it to the developer!
+        </div>
+      )}
     <header className="fixed top-0 z-50 w-full bg-[#050508]/80 backdrop-blur-2xl border-b border-white/5 h-20 shadow-[0_10px_30px_rgba(0,0,0,0.2)]">
       <div className="container mx-auto px-4 h-full flex items-center justify-between">
         
@@ -235,6 +247,13 @@ const Header = () => {
 
         {/* Right Section: Actions & Auth */}
         <div className="flex items-center gap-3 md:gap-5">
+          <button 
+            className="lg:hidden p-2 text-text-primary/60 hover:text-white transition-colors"
+            onClick={() => setShowMobileMenu(!showMobileMenu)}
+          >
+            {showMobileMenu ? <X size={24} /> : <Menu size={24} />}
+          </button>
+
           <button 
             onClick={() => setShowSearch(true)}
             className="group flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300"
@@ -316,7 +335,14 @@ const Header = () => {
                 onMouseEnter={() => setShowDropdown(true)}
                 onMouseLeave={() => setShowDropdown(false)}
               >
-                <button className="flex items-center gap-2 rounded-full ring-2 ring-transparent hover:ring-accent-purple/50 transition-all duration-300 p-0.5">
+                <button 
+                  onClick={(e) => { 
+                    e.preventDefault(); 
+                    e.stopPropagation();
+                    setShowDropdown(true); 
+                  }}
+                  className="flex items-center gap-2 rounded-full ring-2 ring-transparent hover:ring-accent-purple/50 transition-all duration-300 p-0.5"
+                >
                   {userData?.photoURL && !imageError ? (
                     <img 
                       src={userData.photoURL} 
@@ -351,10 +377,15 @@ const Header = () => {
                     </div>
                     
                     <div className="p-2 flex flex-col gap-1">
+                      {(userData?.role === 'super_admin' || userData?.role === 'moderator') && (
+                        <Link to="/admin" onClick={() => setShowDropdown(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-text-primary/70 hover:text-white hover:bg-white/5 rounded-xl transition-all">
+                          <AlertTriangle size={16} className="text-status-danger" /> Admin Panel
+                        </Link>
+                      )}
                       <Link to="/dashboard" onClick={() => setShowDropdown(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-text-primary/70 hover:text-white hover:bg-white/5 rounded-xl transition-all">
                         <LayoutDashboard size={16} className="text-accent-purple" /> Creator Studio
                       </Link>
-                      <Link to={`/profile/${userData?.username}`} onClick={() => setShowDropdown(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-text-primary/70 hover:text-white hover:bg-white/5 rounded-xl transition-all">
+                      <Link to={userData?.username ? `/profile/${userData.username}` : '#'} onClick={() => setShowDropdown(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-text-primary/70 hover:text-white hover:bg-white/5 rounded-xl transition-all">
                         <UserIcon size={16} className="text-accent-cyan" /> Public Profile
                       </Link>
                       <Link to="/wishlist" onClick={() => setShowDropdown(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-text-primary/70 hover:text-white hover:bg-white/5 rounded-xl transition-all">
@@ -385,28 +416,43 @@ const Header = () => {
           )}
         </div>
       </div>
+
+      {/* Mobile Menu */}
+      {showMobileMenu && (
+        <div className="lg:hidden absolute top-20 left-0 w-full bg-[#050508]/95 backdrop-blur-3xl border-b border-white/5 shadow-2xl py-4 px-6 flex flex-col gap-4 animate-fade-in z-40">
+          <Link to="/explore" onClick={() => setShowMobileMenu(false)} className="text-lg font-bold text-white py-2 border-b border-white/5">Explore</Link>
+          <Link to="/leaderboard" onClick={() => setShowMobileMenu(false)} className="text-lg font-bold text-white py-2 border-b border-white/5">Leaderboard</Link>
+          {currentUser && <Link to="/dashboard" onClick={() => setShowMobileMenu(false)} className="text-lg font-bold text-white py-2 border-b border-white/5">Studio</Link>}
+          {(userData?.role === 'super_admin' || userData?.role === 'moderator') && (
+            <Link to="/admin" onClick={() => setShowMobileMenu(false)} className="text-lg font-bold text-status-danger py-2 border-b border-white/5 flex items-center gap-2">
+              <AlertTriangle size={18} /> Admin Panel
+            </Link>
+          )}
+          <Link to="/upload" onClick={() => setShowMobileMenu(false)} className="text-lg font-bold text-accent-cyan py-2 flex items-center gap-2"><Plus size={18} /> Upload Style</Link>
+        </div>
+      )}
     </header>
 
       {/* Search Modal */}
       {showSearch && (
-        <div className="fixed inset-0 z-[100] flex items-start justify-center pt-16 sm:pt-24 px-4 sm:px-6">
+        <div className="fixed inset-0 z-[100] flex items-start justify-center pt-4 sm:pt-24 px-2 sm:px-6">
           <div className="absolute inset-0 bg-[#050508]/80 backdrop-blur-md animate-fade-in" onClick={() => setShowSearch(false)} />
           
-          <div className="relative w-full max-w-2xl bg-[#0a0a0f]/95 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-[0_30px_100px_rgba(0,0,0,0.8)] overflow-hidden animate-scale-in flex flex-col max-h-[80vh]">
+          <div className="relative w-full max-w-2xl bg-[#0a0a0f]/95 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-[0_30px_100px_rgba(0,0,0,0.8)] overflow-hidden animate-scale-in flex flex-col max-h-[90vh] sm:max-h-[80vh]">
             
             {/* Top decorative gradient */}
             <div className="h-1 w-full bg-gradient-to-r from-accent-purple via-accent-cyan to-accent-purple bg-[length:200%_auto] animate-gradient-x" />
 
             {/* Search Input */}
-            <div className="flex items-center px-4 py-4 border-b border-white/5">
-              <Search size={24} className="text-accent-cyan ml-2 mr-4" />
+            <div className="flex items-center px-4 py-3 sm:py-4 border-b border-white/5">
+              <Search size={20} className="text-accent-cyan ml-1 sm:ml-2 mr-3 sm:mr-4" />
               <input
                 type="text"
                 autoFocus
-                placeholder="Search styles, tags, or creators..."
+                placeholder="Search styles, tags..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="flex-1 bg-transparent border-none outline-none text-xl text-white placeholder:text-text-primary/30"
+                className="flex-1 bg-transparent border-none outline-none text-base sm:text-xl text-white placeholder:text-text-primary/30"
               />
               <button 
                 onClick={() => setShowSearch(false)}

@@ -7,7 +7,7 @@ import {
   createUserWithEmailAndPassword
 } from 'firebase/auth';
 import { auth, googleProvider, githubProvider, db } from '../firebase/config';
-import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, getDoc, setDoc, serverTimestamp, onSnapshot } from 'firebase/firestore';
 
 const AuthContext = createContext();
 
@@ -19,40 +19,59 @@ export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [authError, setAuthError] = useState(null);
 
-  // Sync user profile from Firestore
+  // Sync user profile from Firestore real-time
   useEffect(() => {
+    let unsubscribeSnapshot;
+
     if (currentUser) {
-      const fetchUserData = async () => {
-        try {
-          const docRef = doc(db, 'users', currentUser.uid);
-          const docSnap = await getDoc(docRef);
-          if (docSnap.exists()) {
-            setUserData(docSnap.data());
-          } else {
-            // New user login via OAuth, we need to create profile
-            const newUserData = {
-              uid: currentUser.uid,
-              email: currentUser.email,
-              displayName: currentUser.displayName || '',
-              username: '',
-              photoURL: currentUser.photoURL || '',
-              rankTier: 'bronze',
-              rankPoints: 0,
-              joinedAt: serverTimestamp(),
-              isProfileComplete: false,
-            };
-            await setDoc(docRef, newUserData);
-            setUserData(newUserData);
+      const docRef = doc(db, 'users', currentUser.uid);
+      
+      unsubscribeSnapshot = onSnapshot(docRef, async (docSnap) => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          // Emergency override for known admin email to prevent lockout
+          if (currentUser.email === 'panchasarapoojan2004@gmail.com' || currentUser.email === 'panchasarapooijan2004@gmail.com') {
+            data.role = 'super_admin';
           }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
+          setUserData(data);
+        } else {
+          // New user login via OAuth, we need to create profile
+          const newUserData = {
+            uid: currentUser.uid,
+            email: currentUser.email,
+            displayName: currentUser.displayName || '',
+            username: '',
+            photoURL: currentUser.photoURL || '',
+            rankTier: 'bronze',
+            rankPoints: 0,
+            joinedAt: serverTimestamp(),
+            isProfileComplete: false,
+            role: 'user', // Default role is standard user
+          };
+          try {
+            await setDoc(docRef, newUserData);
+            // setDoc will trigger the snapshot again
+          } catch (error) {
+            console.error("Error creating user data:", error);
+            setAuthError("SET_DOC_ERROR: " + error.message);
+          }
         }
-      };
-      fetchUserData();
+      }, (error) => {
+        console.error("Error listening to user data:", error);
+        setAuthError("ON_SNAPSHOT_ERROR: " + error.message);
+      });
     } else {
       setUserData(null);
+      setAuthError(null);
     }
+
+    return () => {
+      if (unsubscribeSnapshot) {
+        unsubscribeSnapshot();
+      }
+    };
   }, [currentUser]);
 
   useEffect(() => {
@@ -90,7 +109,8 @@ export const AuthProvider = ({ children }) => {
     loginWithGithub,
     loginWithEmail,
     registerWithEmail,
-    logout
+    logout,
+    authError
   };
 
   return (

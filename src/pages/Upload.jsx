@@ -9,8 +9,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { db } from '../firebase/config';
 import { collection, addDoc, serverTimestamp, query, where, getDocs, Timestamp, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { updateUserPoints, POINTS } from '../utils/points';
-import { Eye, Code, Layers, Save, Check, FileCode2, AlertCircle, X, Zap } from 'lucide-react';
+import { Eye, Code, Layers, Save, Check, FileCode2, AlertCircle, X, Zap, Search, ChevronDown } from 'lucide-react';
 import StyleCard from '../components/StyleCard';
+import { CATEGORIES } from '../constants/categories';
+import AdSlot from '../components/AdSlot';
 
 const MAX_UPLOADS_PER_DAY = 5;
 
@@ -28,7 +30,9 @@ const Upload = () => {
   
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('Animations');
+  const [categories, setCategories] = useState(['Animations']);
+  const [categorySearch, setCategorySearch] = useState('');
+  const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
   const [previewBgColor, setPreviewBgColor] = useState('#0a0a0f');
   
   const [activeTab, setActiveTab] = useState('css');
@@ -60,7 +64,16 @@ const Upload = () => {
           }
           setTitle(data.title || '');
           setDescription(data.description || '');
-          setCategory(data.category || 'Animations');
+          
+          let initialCategories = [];
+          if (data.categories && Array.isArray(data.categories)) {
+            initialCategories = data.categories;
+          } else if (data.category) {
+            initialCategories = [data.category];
+          } else {
+            initialCategories = ['Animations'];
+          }
+          setCategories(initialCategories);
           setIsCombined(data.isCombined || false);
           setCssCode(data.cssCode || '');
           setHtmlCode(data.htmlCode || '');
@@ -183,7 +196,8 @@ const Upload = () => {
         htmlCode: isCombined ? '' : htmlCode,
         jsCode: isCombined ? '' : jsCode,
         combinedCode: isCombined ? combinedCode : '',
-        category,
+        categories,
+        category: categories.length > 0 ? categories[0] : 'Animations', // For backward compatibility
         previewBgColor,
         cssType: isCombined ? 'Combined Code' : 'Separated',
         updatedAt: serverTimestamp(),
@@ -248,7 +262,8 @@ const Upload = () => {
     htmlCode,
     jsCode,
     combinedCode,
-    category,
+    categories,
+    category: categories.length > 0 ? categories[0] : 'Animations',
     previewBgColor,
     tags: [],
     likesCount: 0,
@@ -328,10 +343,12 @@ const Upload = () => {
         </div>
       </div>
 
+      <AdSlot format="horizontal" className="mb-8" />
+
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 relative z-10">
         {/* Editor Side (Left 7 cols) */}
         <div className="lg:col-span-7 flex flex-col gap-6">
-          <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-6 backdrop-blur-xl">
+          <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-6 backdrop-blur-xl relative z-20">
             <h3 className="text-sm font-bold text-text-primary/40 uppercase tracking-wider mb-5 flex items-center gap-2">
               <Layers size={16} /> Metadata
             </h3>
@@ -366,20 +383,65 @@ const Upload = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
-                  <label className="block text-sm font-medium text-text-primary/80 mb-2">Category</label>
-                  <select 
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                    className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-accent-purple focus:outline-none transition-all appearance-none cursor-pointer"
-                  >
-                    <option>Animations</option>
-                    <option>Buttons</option>
-                    <option>Cards</option>
-                    <option>Loaders</option>
-                    <option>Hover Effects</option>
-                    <option>Inputs</option>
-                    <option>Checkboxes</option>
-                  </select>
+                  <label className="block text-sm font-medium text-text-primary/80 mb-2">Categories</label>
+                  <div className="relative">
+                    <div 
+                      className="min-h-[50px] w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white focus-within:border-accent-purple transition-all cursor-pointer flex flex-wrap gap-2 items-center"
+                      onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
+                    >
+                      {categories.map(cat => (
+                        <span key={cat} className="inline-flex items-center gap-1 bg-white/10 px-2 py-1 rounded text-sm hover:bg-status-danger/20 hover:text-status-danger transition-colors" onClick={(e) => {
+                          e.stopPropagation();
+                          setCategories(categories.filter(c => c !== cat));
+                        }}>
+                          {cat} <X size={12} />
+                        </span>
+                      ))}
+                      {categories.length === 0 && <span className="text-white/30 px-1">Select categories...</span>}
+                      <div className="ml-auto pointer-events-none text-white/30">
+                        <ChevronDown size={16} />
+                      </div>
+                    </div>
+                    
+                    {showCategoryDropdown && (
+                      <div className="absolute z-50 w-full mt-2 bg-primary-surface border border-white/10 rounded-xl shadow-2xl overflow-hidden animate-fade-in">
+                        <div className="p-2 border-b border-white/5 flex items-center bg-black/20">
+                          <Search size={14} className="text-text-primary/50 mr-2" />
+                          <input 
+                            type="text" 
+                            placeholder="Search categories..." 
+                            className="bg-transparent w-full text-sm outline-none text-white placeholder-text-primary/30"
+                            value={categorySearch}
+                            onChange={(e) => setCategorySearch(e.target.value)}
+                            onClick={(e) => e.stopPropagation()}
+                          />
+                        </div>
+                        <div className="max-h-60 overflow-y-auto custom-scrollbar p-1">
+                          {CATEGORIES.filter(c => c.toLowerCase().includes(categorySearch.toLowerCase())).length === 0 ? (
+                            <div className="p-3 text-center text-sm text-text-primary/50">No categories found.</div>
+                          ) : CATEGORIES.filter(c => c.toLowerCase().includes(categorySearch.toLowerCase())).map(cat => {
+                            const isSelected = categories.includes(cat);
+                            return (
+                              <div 
+                                key={cat}
+                                className={`px-3 py-2 text-sm rounded-lg cursor-pointer flex items-center justify-between transition-colors ${isSelected ? 'bg-accent-purple/20 text-accent-purple' : 'hover:bg-white/5 text-text-primary/80 hover:text-white'}`}
+                                onClick={() => {
+                                  if (isSelected) {
+                                    setCategories(categories.filter(c => c !== cat));
+                                  } else {
+                                    setCategories([...categories, cat]);
+                                  }
+                                }}
+                              >
+                                {cat}
+                                {isSelected && <Check size={14} />}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-text-primary/80 mb-2">Code Format</label>
@@ -396,7 +458,7 @@ const Upload = () => {
             </div>
           </div>
 
-          <div className="bg-[#0f0f13] border border-white/10 rounded-3xl flex flex-col flex-grow overflow-hidden shadow-2xl">
+          <div className="bg-[#0f0f13] border border-white/10 rounded-3xl flex flex-col flex-grow overflow-hidden shadow-2xl relative z-10">
             <div className="flex border-b border-white/10 bg-black/20 overflow-x-auto custom-scrollbar">
               {isCombined ? (
                 <button 

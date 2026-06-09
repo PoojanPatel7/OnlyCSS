@@ -7,6 +7,7 @@ import { Code, Layout, Heart, Info, MapPin, Link as LinkIcon, Calendar, Activity
 import { useAuth } from '../context/AuthContext';
 import { createNotification } from '../utils/notifications';
 import { updateUserPoints, POINTS } from '../utils/points';
+import AdSlot from '../components/AdSlot';
 
 const Avatar = ({ src, alt, className, fallbackText, fallbackClass }) => {
   const [error, setError] = useState(false);
@@ -331,6 +332,8 @@ const Profile = () => {
             </button>
           ))}
         </div>
+
+        <AdSlot format="horizontal" className="mb-8" />
 
         {/* Tab Content */}
         <div className="min-h-[400px]">

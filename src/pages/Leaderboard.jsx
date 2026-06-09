@@ -3,6 +3,7 @@ import { db } from '../firebase/config';
 import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
 import { Link } from 'react-router-dom';
 import { Trophy, Star, ChevronUp, Zap, Info, Award, Upload, Heart, Bookmark, Copy, Users } from 'lucide-react';
+import AdSlot from '../components/AdSlot';
 
 const Avatar = ({ src, alt, className, fallbackText, fallbackClass }) => {
   const [error, setError] = useState(false);
@@ -131,6 +132,8 @@ const Leaderboard = () => {
             </div>
           </div>
         </div>
+
+        <AdSlot format="horizontal" className="mb-16" />
 
         {loading ? (
           <div className="max-w-4xl mx-auto flex flex-col items-center justify-center py-20">

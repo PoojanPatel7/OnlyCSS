@@ -3,14 +3,172 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { db } from '../firebase/config';
 import { collection, query, where, getDocs } from 'firebase/firestore';
-import { Activity, TrendingUp, Users, Eye, Download, Calendar, Heart, Bookmark, BarChart3, Shield, Layers, Zap } from 'lucide-react';
+import { Activity, Users, Eye, Download, Heart, Bookmark, BarChart3, Layers, Shield } from 'lucide-react';
 import DashboardSidebar from '../components/layout/DashboardSidebar';
+import AdSlot from '../components/AdSlot';
+
+/* ─── Count-up animation hook ─── */
+const useCountUp = (target, duration = 1200) => {
+  const [value, setValue] = useState(0);
+  useEffect(() => {
+    if (target === 0) { setValue(0); return; }
+    let current = 0;
+    const step = target / (duration / 16);
+    const timer = setInterval(() => {
+      current = Math.min(current + step, target);
+      setValue(Math.floor(current));
+      if (current >= target) clearInterval(timer);
+    }, 16);
+    return () => clearInterval(timer);
+  }, [target, duration]);
+  return value;
+};
+
+/* ─── Inline style objects (Obsidian Editorial) ─── */
+const s = {
+  page: {
+    minHeight: '100vh',
+    background: 'var(--oe-bg-base)',
+    color: 'var(--oe-text-primary)',
+    fontFamily: 'var(--font-sans)',
+  },
+  mainContent: {
+    maxWidth: 1400,
+    paddingTop: 48,
+    paddingBottom: 80,
+  },
+  card: {
+    background: 'var(--oe-bg-surface)',
+    border: '1px solid var(--oe-border-subtle)',
+    borderRadius: 16,
+    padding: '24px 28px',
+  },
+  cardLarge: {
+    background: 'var(--oe-bg-surface)',
+    border: '1px solid var(--oe-border-subtle)',
+    borderRadius: 16,
+    padding: '28px 32px',
+  },
+  overline: {
+    fontFamily: 'var(--font-mono)',
+    fontSize: 10,
+    letterSpacing: '0.2em',
+    textTransform: 'uppercase',
+    color: 'var(--oe-text-tertiary)',
+    marginBottom: 10,
+  },
+  h1: {
+    fontFamily: 'var(--font-serif)',
+    fontStyle: 'italic',
+    fontSize: 48,
+    lineHeight: 1.1,
+    color: 'var(--oe-text-primary)',
+    marginBottom: 8,
+    fontWeight: 400,
+  },
+  subtitle: {
+    fontFamily: 'var(--font-sans)',
+    fontSize: 16,
+    fontWeight: 400,
+    color: 'var(--oe-text-secondary)',
+  },
+  sectionTitle: {
+    fontFamily: 'var(--font-sans)',
+    fontSize: 18,
+    fontWeight: 700,
+    color: 'var(--oe-text-primary)',
+  },
+  sectionSubtitle: {
+    fontFamily: 'var(--font-sans)',
+    fontSize: 13,
+    fontWeight: 400,
+    color: 'var(--oe-text-secondary)',
+    marginTop: 4,
+  },
+  metricNumber: {
+    fontFamily: 'var(--font-serif)',
+    fontStyle: 'italic',
+    fontSize: 44,
+    lineHeight: 1,
+    color: 'var(--oe-text-primary)',
+    fontWeight: 400,
+  },
+  monoLabel: {
+    fontFamily: 'var(--font-mono)',
+    fontSize: 11,
+    letterSpacing: '0.1em',
+    textTransform: 'uppercase',
+    color: 'var(--oe-text-tertiary)',
+  },
+  liveBadge: {
+    fontFamily: 'var(--font-mono)',
+    fontSize: 12,
+    color: 'var(--oe-accent-emerald)',
+    background: 'var(--oe-accent-emerald-muted)',
+    border: '1px solid rgba(52, 211, 153, 0.20)',
+    borderRadius: 6,
+    padding: '6px 14px',
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 6,
+  },
+  kpiBadge: {
+    fontFamily: 'var(--font-mono)',
+    fontSize: 11,
+    color: 'var(--oe-accent-emerald)',
+    background: 'var(--oe-accent-emerald-muted)',
+    border: '1px solid rgba(52,211,153,0.15)',
+    borderRadius: 6,
+    padding: '3px 8px',
+  },
+  divider: {
+    width: '100%',
+    height: 1,
+    background: 'var(--oe-border-subtle)',
+    marginTop: 32,
+    border: 'none',
+  },
+  skeleton: {
+    borderRadius: 16,
+    height: 140,
+    background: 'linear-gradient(90deg, var(--oe-bg-elevated) 0%, var(--oe-bg-hover) 50%, var(--oe-bg-elevated) 100%)',
+    backgroundSize: '200% 100%',
+    animation: 'oe-skeletonShimmer 1.5s ease-in-out infinite',
+    border: '1px solid var(--oe-border-subtle)',
+  },
+};
+
+/* ─── KPI definitions ─── */
+const kpiConfig = [
+  { key: 'views',     label: 'IMPRESSIONS', Icon: Eye,      accent: 'var(--oe-accent-blue)',    accentMuted: 'var(--oe-accent-blue-muted)' },
+  { key: 'downloads', label: 'COPIES',      Icon: Download,  accent: 'var(--oe-accent-violet)',  accentMuted: 'var(--oe-accent-violet-muted)' },
+  { key: 'likes',     label: 'LIKES',       Icon: Heart,     accent: 'var(--oe-accent-rose)',    accentMuted: 'var(--oe-accent-rose-muted)' },
+  { key: 'saves',     label: 'SAVES',       Icon: Bookmark,  accent: 'var(--oe-accent-amber)',   accentMuted: 'var(--oe-accent-amber-muted)' },
+  { key: 'followers', label: 'FOLLOWERS',   Icon: Users,     accent: 'var(--oe-accent-emerald)', accentMuted: 'var(--oe-accent-emerald-muted)' },
+  { key: 'uploads',   label: 'PUBLISHED',   Icon: Layers,    accent: 'var(--oe-text-secondary)', accentMuted: 'rgba(255,255,255,0.05)' },
+];
+
+/* ─── Engagement breakdown definitions ─── */
+const engagementConfig = [
+  { key: 'views',     label: 'Impressions', Icon: Eye,      accent: 'var(--oe-accent-blue)' },
+  { key: 'likes',     label: 'Likes',       Icon: Heart,    accent: 'var(--oe-accent-rose)' },
+  { key: 'saves',     label: 'Saves',       Icon: Bookmark, accent: 'var(--oe-accent-amber)' },
+  { key: 'downloads', label: 'Copies',      Icon: Download, accent: 'var(--oe-accent-violet)' },
+];
+
+/* ─── Rank badge styles ─── */
+const rankStyles = [
+  { bg: 'rgba(251,191,36,0.12)', border: 'rgba(251,191,36,0.20)', color: '#fbbf24' },
+  { bg: 'rgba(255,255,255,0.06)', border: 'rgba(255,255,255,0.10)', color: '#c0c0c0' },
+  { bg: 'rgba(180,100,50,0.10)', border: 'rgba(180,100,50,0.20)', color: '#cd7f32' },
+];
 
 const Analytics = () => {
   const { currentUser, userData } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  
+  const [hoveredBar, setHoveredBar] = useState(null);
+
   const [stats, setStats] = useState({
     views: 0,
     downloads: 0,
@@ -19,7 +177,7 @@ const Analytics = () => {
     followers: 0,
     uploads: 0
   });
-  
+
   const [chartData, setChartData] = useState([]);
   const [topStyles, setTopStyles] = useState([]);
 
@@ -32,31 +190,31 @@ const Analytics = () => {
     const fetchAnalytics = async () => {
       try {
         const stylesQ = query(
-          collection(db, 'styles'), 
+          collection(db, 'styles'),
           where('authorId', '==', currentUser.uid)
         );
-        
+
         const snap = await getDocs(stylesQ);
         const styles = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        
+
         let views = 0;
         let downloads = 0;
         let likes = 0;
         let saves = 0;
-        
+
         const timeData = {};
-        
+
         styles.forEach(style => {
           views += (style.viewsCount || 0);
           downloads += (style.downloadsCount || 0);
           likes += (style.likesCount || 0);
           saves += (style.savedBy?.length || 0);
-          
+
           if (style.publishedAt) {
             const date = style.publishedAt.toDate();
             const monthYear = date.toLocaleString('default', { month: 'short', year: '2-digit' });
             const sortKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-            
+
             if (!timeData[sortKey]) {
               timeData[sortKey] = { label: monthYear, uploads: 0, likes: 0, views: 0 };
             }
@@ -65,7 +223,7 @@ const Analytics = () => {
             timeData[sortKey].views += (style.viewsCount || 0);
           }
         });
-        
+
         const sortedKeys = Object.keys(timeData).sort();
         const finalChart = sortedKeys.slice(-8).map(key => timeData[key]);
 
@@ -84,7 +242,7 @@ const Analytics = () => {
           followers: userData?.followers?.length || userData?.followersCount || 0,
           uploads: styles.length
         });
-        
+
         setChartData(finalChart);
         setTopStyles(sortedStyles.slice(0, 4));
 
@@ -94,7 +252,7 @@ const Analytics = () => {
         setLoading(false);
       }
     };
-    
+
     fetchAnalytics();
   }, [currentUser, userData, navigate]);
 
@@ -103,225 +261,500 @@ const Analytics = () => {
   const maxViews = Math.max(...chartData.map(c => c.views), 1);
   const maxEngagementValue = Math.max(stats.views, stats.likes, stats.downloads, stats.saves, 1);
 
+  /* Count-up values */
+  const animatedStats = {
+    views: useCountUp(stats.views),
+    downloads: useCountUp(stats.downloads),
+    likes: useCountUp(stats.likes),
+    saves: useCountUp(stats.saves),
+    followers: useCountUp(stats.followers),
+    uploads: useCountUp(stats.uploads),
+  };
+
   return (
-    <div className="min-h-screen bg-[#050508] relative font-sans pb-20 selection:bg-accent-cyan/30 selection:text-white">
-      {/* Dynamic Background Gradients */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-[5%] left-[10%] w-[35%] h-[35%] rounded-full bg-accent-purple/10 blur-[150px] animate-pulse-slow"></div>
-        <div className="absolute bottom-[10%] right-[5%] w-[45%] h-[45%] rounded-full bg-accent-cyan/10 blur-[150px]" style={{ animationDelay: '2s' }}></div>
-      </div>
-
-      <div className="container mx-auto px-4 py-12 flex flex-col lg:flex-row gap-8 relative z-10">
+    <div style={s.page}>
+      <div className="flex flex-col xl:flex-row" style={{ minHeight: '100vh' }}>
         <DashboardSidebar />
-        
-        {/* Main Content Area */}
-        <div className="flex-grow flex flex-col gap-8 min-w-0">
-          
-          {/* Header Card */}
-          <div className="bg-white/[0.02] border border-white/5 rounded-[2rem] p-8 md:p-10 backdrop-blur-xl shadow-[0_0_50px_rgba(0,0,0,0.3)] flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative overflow-hidden group">
-            <div className="absolute -right-20 -top-20 w-64 h-64 bg-accent-cyan/10 rounded-full blur-[80px] group-hover:bg-accent-cyan/20 transition-colors duration-500"></div>
-            <div className="relative z-10">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-text-primary/5 border border-text-primary/10 text-xs font-bold text-text-primary/70 mb-4">
-                <Shield size={14} className="text-accent-purple" /> Live Insights
-              </div>
-              <h2 className="text-4xl font-heading font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-text-primary/60 mb-2 flex items-center gap-3">
-                 Performance Matrix
-              </h2>
-              <p className="text-text-primary/50 text-lg">Real-time telemetry and engagement metrics for your published assets.</p>
-            </div>
-            
-            <div className="flex items-center gap-2 bg-text-primary/5 border border-text-primary/10 rounded-2xl p-1 relative z-10 shadow-inner">
-              {['Lifetime'].map((period, i) => (
-                <button key={period} className="px-6 py-2.5 rounded-xl text-sm font-bold bg-white/10 text-white shadow-lg border border-white/5">
-                  {period}
-                </button>
-              ))}
-            </div>
-          </div>
 
+        {/* Main content */}
+        <div className="flex-grow flex flex-col gap-8 px-6 xl:px-10 min-w-0" style={s.mainContent}>
+
+          {/* ═══ SECTION 6: PAGE HEADER ═══ */}
+          <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div>
+              <p style={s.overline}>ANALYTICS</p>
+              <h1 style={s.h1}>Performance Overview</h1>
+              <p style={s.subtitle}>Lifetime metrics across all published components.</p>
+            </div>
+            <div>
+              <span style={s.liveBadge}>
+                <span style={{ animation: 'oe-pulseDot 2s ease-in-out infinite' }}>●</span> Live
+              </span>
+            </div>
+          </header>
+          <hr style={s.divider} />
+
+          <AdSlot format="horizontal" className="!mt-0" />
+
+          {/* ═══ SECTION 7/8: KPI METRIC STRIP or SKELETON ═══ */}
           {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[1, 2, 3, 4, 5, 6].map(i => (
-                <div key={i} className="h-40 animate-pulse bg-white/[0.02] border border-white/5 rounded-[2rem] backdrop-blur-xl"></div>
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+              {[0,1,2,3,4,5].map(i => (
+                <div key={i} style={s.skeleton} />
               ))}
             </div>
           ) : (
             <>
-              {/* Core Metrics Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[
-                  { label: 'Total Impressions', value: stats.views, icon: <Eye size={22} />, color: 'text-accent-cyan', bg: 'bg-accent-cyan/10', border: 'group-hover:border-accent-cyan/30' },
-                  { label: 'Asset Copies', value: stats.downloads, icon: <Download size={22} />, color: 'text-accent-purple', bg: 'bg-accent-purple/10', border: 'group-hover:border-accent-purple/30' },
-                  { label: 'Total Likes', value: stats.likes, icon: <Heart size={22} />, color: 'text-accent-pink', bg: 'bg-accent-pink/10', border: 'group-hover:border-accent-pink/30' },
-                  { label: 'Saves / Bookmarks', value: stats.saves, icon: <Bookmark size={22} />, color: 'text-amber-400', bg: 'bg-amber-400/10', border: 'group-hover:border-amber-400/30' },
-                  { label: 'Active Followers', value: stats.followers, icon: <Users size={22} />, color: 'text-emerald-400', bg: 'bg-emerald-400/10', border: 'group-hover:border-emerald-400/30' },
-                  { label: 'Published Styles', value: stats.uploads, icon: <Activity size={22} />, color: 'text-blue-400', bg: 'bg-blue-400/10', border: 'group-hover:border-blue-400/30' },
-                ].map((stat, i) => (
-                  <div key={i} className={`bg-white/[0.02] border border-white/5 rounded-[2rem] p-8 backdrop-blur-xl shadow-xl relative overflow-hidden group transition-all duration-300 hover:-translate-y-1 ${stat.border}`}>
-                    <div className="flex justify-between items-start mb-6">
-                      <div className={`p-4 rounded-2xl ${stat.bg} ${stat.color} shadow-inner`}>
-                        {stat.icon}
+              {/* ─── KPI Cards ─── */}
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+                {kpiConfig.map((kpi, index) => {
+                  const val = animatedStats[kpi.key];
+                  return (
+                    <div
+                      key={kpi.key}
+                      style={{
+                        ...s.card,
+                        cursor: 'default',
+                        transition: 'all 200ms cubic-bezier(0.16, 1, 0.3, 1)',
+                        animation: `oe-slideUp 300ms ${index * 60}ms both ease-out`,
+                      }}
+                      className="oe-kpi-card"
+                      onMouseEnter={e => {
+                        e.currentTarget.style.borderColor = 'var(--oe-border-default)';
+                        e.currentTarget.style.background = 'var(--oe-bg-elevated)';
+                        e.currentTarget.style.transform = 'translateY(-2px)';
+                      }}
+                      onMouseLeave={e => {
+                        e.currentTarget.style.borderColor = '';
+                        e.currentTarget.style.background = 'var(--oe-bg-surface)';
+                        e.currentTarget.style.transform = 'translateY(0)';
+                      }}
+                    >
+                      {/* Row 1: icon + badge */}
+                      <div className="flex items-start justify-between">
+                        <div style={{
+                          width: 36, height: 36, borderRadius: 10,
+                          background: 'var(--oe-bg-elevated)',
+                          border: '1px solid var(--oe-border-default)',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        }}>
+                          <kpi.Icon size={18} style={{ color: kpi.accent }} />
+                        </div>
+                        <span style={s.kpiBadge}>Live</span>
                       </div>
-                      <span className="flex items-center gap-1 text-xs font-bold text-text-primary/30 bg-text-primary/5 px-3 py-1.5 rounded-xl border border-text-primary/10">
-                        <TrendingUp size={12} /> Live
-                      </span>
+
+                      {/* Row 2: number */}
+                      <div style={{ ...s.metricNumber, marginTop: 20 }}>
+                        {val.toLocaleString()}
+                      </div>
+
+                      {/* Row 3: label */}
+                      <div style={{ ...s.monoLabel, marginTop: 6, display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <span style={{
+                          width: 6, height: 6, borderRadius: '50%',
+                          background: kpi.accent, display: 'inline-block', flexShrink: 0,
+                        }} />
+                        {kpi.label}
+                      </div>
                     </div>
-                    <div className="text-4xl font-black text-white tracking-tight mb-2 drop-shadow-md">
-                      {stat.value.toLocaleString()}
-                    </div>
-                    <div className="text-text-primary/40 text-sm font-bold uppercase tracking-widest">{stat.label}</div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
-              {/* Data Visualization Grid */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                
-                {/* Engagement Distribution */}
-                <div className="bg-white/[0.02] border border-white/5 rounded-[2rem] p-8 backdrop-blur-xl shadow-2xl relative overflow-hidden">
-                  <div className="flex items-center gap-3 mb-8">
-                    <div className="p-3 rounded-xl bg-accent-pink/10 text-accent-pink"><TrendingUp size={20} /></div>
+              {/* ═══ SECTION 9 + 10: Chart + Top Assets (2-col) ═══ */}
+              <div className="flex flex-col xl:flex-row gap-4" style={{ marginTop: 8 }}>
+
+                {/* ─── Growth Velocity Chart ─── */}
+                <div style={{ ...s.cardLarge, flex: 1.4 }}>
+                  {/* Header */}
+                  <div className="flex items-start justify-between" style={{ marginBottom: 32 }}>
                     <div>
-                      <h3 className="text-xl font-heading font-black text-white">Engagement Breakdown</h3>
-                      <p className="text-text-primary/40 text-xs">Relative distribution of user interactions</p>
+                      <div style={s.sectionTitle}>Growth Velocity</div>
+                      <div style={s.sectionSubtitle}>Views mapped to publication timeline</div>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <span className="flex items-center gap-2">
+                        <span style={{ width: 8, height: 8, borderRadius: 2, background: 'var(--oe-accent-blue)', display: 'inline-block' }} />
+                        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--oe-text-tertiary)' }}>Views</span>
+                      </span>
+                      <span className="flex items-center gap-2">
+                        <span style={{ width: 8, height: 8, borderRadius: 2, background: 'var(--oe-accent-violet)', display: 'inline-block' }} />
+                        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--oe-text-tertiary)' }}>Uploads</span>
+                      </span>
                     </div>
                   </div>
 
-                  <div className="space-y-6">
-                    {[
-                      { label: 'Impressions', value: stats.views, color: 'from-accent-cyan/80 to-blue-500/80', icon: <Eye size={14}/> },
-                      { label: 'Likes', value: stats.likes, color: 'from-accent-pink/80 to-rose-500/80', icon: <Heart size={14}/> },
-                      { label: 'Saves', value: stats.saves, color: 'from-amber-400/80 to-orange-500/80', icon: <Bookmark size={14}/> },
-                      { label: 'Copies', value: stats.downloads, color: 'from-accent-purple/80 to-indigo-500/80', icon: <Download size={14}/> }
-                    ].map((item, i) => (
-                      <div key={i} className="relative group">
-                        <div className="flex justify-between text-sm font-bold mb-2">
-                          <span className="text-text-primary/70 flex items-center gap-2">{item.icon} {item.label}</span>
-                          <span className="text-white">{item.value.toLocaleString()}</span>
-                        </div>
-                        <div className="h-3 w-full bg-white/5 rounded-full overflow-hidden flex">
-                          <div 
-                            className={`h-full bg-gradient-to-r ${item.color} rounded-full transition-all duration-1000 ease-out group-hover:brightness-125`}
-                            style={{ width: `${Math.max((item.value / maxEngagementValue) * 100, 2)}%` }}
-                          ></div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                  {/* Chart area */}
+                  <div style={{ height: 260, position: 'relative' }}>
+                    {chartData.length > 0 ? (
+                      <>
+                        {/* Grid lines */}
+                        {[0, 1, 2, 3].map(i => (
+                          <div key={i} style={{
+                            position: 'absolute', left: 44, right: 0,
+                            bottom: `${(i + 1) * 25}%`,
+                            borderTop: '1px dashed rgba(255,255,255,0.04)',
+                          }} />
+                        ))}
 
-                {/* Top Assets */}
-                <div className="bg-white/[0.02] border border-white/5 rounded-[2rem] p-8 backdrop-blur-xl shadow-2xl relative overflow-hidden">
-                  <div className="flex items-center gap-3 mb-8">
-                    <div className="p-3 rounded-xl bg-amber-400/10 text-amber-400"><Zap size={20} /></div>
-                    <div>
-                      <h3 className="text-xl font-heading font-black text-white">Top Performing Assets</h3>
-                      <p className="text-text-primary/40 text-xs">Styles generating the highest traction</p>
-                    </div>
-                  </div>
+                        {/* Y-axis labels */}
+                        <div style={{ position: 'absolute', left: 0, top: 0, bottom: 28, width: 36 }}>
+                          {[4, 3, 2, 1].map(mult => (
+                            <div key={mult} style={{
+                              position: 'absolute',
+                              bottom: `${mult * 25}%`,
+                              right: 0,
+                              transform: 'translateY(50%)',
+                              fontFamily: 'var(--font-mono)',
+                              fontSize: 10,
+                              color: 'var(--oe-text-tertiary)',
+                              textAlign: 'right',
+                            }}>
+                              {Math.round((maxViews / 4) * mult)}
+                            </div>
+                          ))}
+                        </div>
 
-                  <div className="space-y-4">
-                    {topStyles.length > 0 ? topStyles.map((style, i) => {
-                      const styleMax = Math.max(style.viewsCount || 0, style.likesCount || 0, 1);
-                      return (
-                        <div key={i} className="p-4 rounded-xl bg-white/5 border border-white/5 hover:border-white/10 transition-colors group flex items-center gap-4">
-                           <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-white/10 to-transparent border border-white/10 flex items-center justify-center font-bold text-text-primary/50 group-hover:text-white transition-colors">
-                             #{i + 1}
-                           </div>
-                           <div className="flex-grow min-w-0">
-                              <h4 className="text-white font-bold truncate text-sm mb-2">{style.title}</h4>
-                              <div className="flex gap-2 h-1.5 w-full bg-black/20 rounded-full overflow-hidden">
-                                 <div className="h-full bg-accent-cyan" style={{ width: `${((style.viewsCount || 0)/styleMax)*100}%` }} title={`Views: ${style.viewsCount || 0}`}></div>
-                                 <div className="h-full bg-accent-pink" style={{ width: `${((style.likesCount || 0)/styleMax)*100}%` }} title={`Likes: ${style.likesCount || 0}`}></div>
+                        {/* Bottom axis line */}
+                        <div style={{
+                          position: 'absolute', left: 44, right: 0, bottom: 28,
+                          borderTop: '1px solid var(--oe-border-default)',
+                        }} />
+
+                        {/* Bar group */}
+                        <div style={{
+                          position: 'absolute', left: 44, right: 0, bottom: 28, top: 0,
+                          display: 'flex', alignItems: 'flex-end', gap: 8,
+                        }}>
+                          {chartData.map((d, i) => {
+                            const heightPct = Math.max((d.views / maxViews) * 100, 5);
+                            return (
+                              <div key={i} className="flex flex-col items-center flex-1" style={{ position: 'relative', height: '100%', justifyContent: 'flex-end', display: 'flex' }}>
+                                {/* Tooltip */}
+                                {hoveredBar === i && (
+                                  <div style={{
+                                    position: 'absolute',
+                                    bottom: `calc(${heightPct}% + 12px)`,
+                                    left: '50%',
+                                    transform: 'translateX(-50%)',
+                                    background: 'var(--oe-bg-elevated)',
+                                    border: '1px solid var(--oe-border-default)',
+                                    borderRadius: 10,
+                                    padding: '12px 16px',
+                                    boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
+                                    backdropFilter: 'blur(12px)',
+                                    zIndex: 20,
+                                    whiteSpace: 'nowrap',
+                                    pointerEvents: 'none',
+                                    opacity: 1,
+                                    transition: 'opacity 150ms ease',
+                                  }}>
+                                    <div style={{
+                                      fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: 13,
+                                      color: 'var(--oe-text-primary)',
+                                      borderBottom: '1px solid var(--oe-border-subtle)',
+                                      paddingBottom: 8, marginBottom: 8,
+                                    }}>{d.label}</div>
+                                    {[
+                                      { label: 'VIEWS', value: d.views, Icon: Eye, color: 'var(--oe-accent-blue)' },
+                                      { label: 'LIKES', value: d.likes, Icon: Heart, color: 'var(--oe-accent-rose)' },
+                                      { label: 'UPLOADS', value: d.uploads, Icon: Activity, color: 'var(--oe-accent-violet)' },
+                                    ].map(row => (
+                                      <div key={row.label} className="flex items-center justify-between" style={{ gap: 24, marginBottom: 4 }}>
+                                        <span className="flex items-center gap-1" style={{ fontFamily: 'var(--font-mono)', fontSize: 10, textTransform: 'uppercase', color: 'var(--oe-text-tertiary)' }}>
+                                          <row.Icon size={12} style={{ color: row.color }} />
+                                          {row.label}
+                                        </span>
+                                        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--oe-text-primary)' }}>
+                                          {row.value.toLocaleString()}
+                                        </span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+
+                                {/* Bar */}
+                                <div
+                                  style={{
+                                    width: '100%',
+                                    maxWidth: 48,
+                                    height: `${heightPct}%`,
+                                    background: 'linear-gradient(to top, #3060cc, var(--oe-accent-blue))',
+                                    borderRadius: '6px 6px 0 0',
+                                    cursor: 'pointer',
+                                    transition: 'filter 150ms ease, transform 150ms ease',
+                                    transformOrigin: 'bottom',
+                                    animation: `oe-growBar 500ms ${i * 60}ms both cubic-bezier(0.34, 1.56, 0.64, 1)`,
+                                    position: 'relative',
+                                    overflow: 'hidden',
+                                    filter: hoveredBar === i ? 'brightness(1.3)' : 'brightness(1)',
+                                  }}
+                                  onMouseEnter={() => setHoveredBar(i)}
+                                  onMouseLeave={() => setHoveredBar(null)}
+                                />
+
+                                {/* X label */}
+                                <span style={{
+                                  fontFamily: 'var(--font-mono)', fontSize: 10,
+                                  color: 'var(--oe-text-tertiary)',
+                                  marginTop: 10, whiteSpace: 'nowrap',
+                                }}>{d.label}</span>
                               </div>
-                           </div>
-                           <div className="text-right shrink-0">
-                              <div className="text-sm font-black text-white">{((style.viewsCount || 0) + (style.likesCount || 0) * 2).toLocaleString()}</div>
-                              <div className="text-[10px] text-text-primary/40 uppercase font-bold tracking-wider">Score</div>
-                           </div>
+                            );
+                          })}
                         </div>
-                      );
-                    }) : (
-                      <div className="py-8 text-center border-2 border-dashed border-white/5 rounded-xl">
-                        <Layers className="mx-auto text-text-primary/20 mb-2" size={32} />
-                        <span className="text-sm text-text-primary/40">No assets published yet</span>
+                      </>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center" style={{ height: '100%', textAlign: 'center' }}>
+                        <BarChart3 size={40} style={{ color: 'var(--oe-text-tertiary)' }} />
+                        <div style={{ fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: 16, color: 'var(--oe-text-secondary)', marginTop: 16 }}>
+                          No data yet
+                        </div>
+                        <div style={{ fontFamily: 'var(--font-sans)', fontSize: 13, color: 'var(--oe-text-tertiary)', marginTop: 4 }}>
+                          Publish your first component to begin tracking.
+                        </div>
                       </div>
                     )}
                   </div>
                 </div>
 
-              </div>
-
-              {/* Dynamic Chart Section (Growth Velocity) */}
-              <div className="bg-white/[0.02] border border-white/5 rounded-[2rem] p-8 md:p-10 backdrop-blur-xl shadow-2xl min-h-[450px] flex flex-col relative overflow-hidden">
-                <div className="absolute -left-32 -bottom-32 w-96 h-96 bg-accent-purple/10 rounded-full blur-[100px] pointer-events-none"></div>
-                
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-12 relative z-10">
-                  <div>
-                     <h3 className="text-2xl font-heading font-black text-white flex items-center gap-3">
-                        <BarChart3 className="text-accent-cyan" size={24} /> Growth Velocity
-                     </h3>
-                     <p className="text-text-primary/50 text-sm mt-1">Monthly chronological performance mapping based on style publication.</p>
+                {/* ─── Top Assets Panel ─── */}
+                <div style={{ ...s.cardLarge, flex: 1 }}>
+                  {/* Header */}
+                  <div style={{ marginBottom: 28 }}>
+                    <div style={s.sectionTitle}>Top Assets</div>
+                    <div style={s.sectionSubtitle}>Ranked by engagement score</div>
                   </div>
-                  <div className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-text-primary/70 text-sm font-medium flex items-center gap-2">
-                     <Calendar size={16} className="text-accent-purple"/> Based on Published Date
-                  </div>
-                </div>
-                
-                <div className="flex-grow flex flex-col justify-end relative z-10 h-64 mt-auto">
-                  {chartData.length > 0 ? (
-                    <div className="flex items-end justify-between gap-2 md:gap-4 h-full border-b-2 border-white/10 pb-4 relative">
-                      
-                      {/* Background grid lines */}
-                      <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-10">
-                        {[1, 2, 3, 4].map(line => (
-                           <div key={line} className="w-full h-px bg-white"></div>
-                        ))}
-                      </div>
 
-                      {chartData.map((d, i) => {
-                        const heightPercent = Math.max((d.views / maxViews) * 100, 5);
-                        
+                  {/* Asset rows */}
+                  {topStyles.length > 0 ? (
+                    <div className="flex flex-col">
+                      {topStyles.map((style, i) => {
+                        const styleMax = Math.max(style.viewsCount || 0, style.likesCount || 0, 1);
+                        const score = (style.viewsCount || 0) + (style.likesCount || 0) * 2;
+                        const rank = rankStyles[i] || {
+                          bg: 'var(--oe-bg-elevated)',
+                          border: 'var(--oe-border-subtle)',
+                          color: 'var(--oe-text-tertiary)',
+                        };
+
                         return (
-                          <div key={i} className="flex flex-col items-center gap-3 flex-1 group relative h-full justify-end">
-                             {/* Hover Tooltip */}
-                             <div className="absolute bottom-full mb-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0 bg-black/80 backdrop-blur-md text-white text-xs px-4 py-3 rounded-xl border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)] pointer-events-none whitespace-nowrap z-20 flex flex-col gap-1">
-                                <span className="font-bold text-accent-cyan flex items-center justify-between gap-4">Views: <span>{d.views.toLocaleString()}</span></span>
-                                <span className="font-bold text-accent-pink flex items-center justify-between gap-4">Likes: <span>{d.likes.toLocaleString()}</span></span>
-                                <span className="font-bold text-text-primary/70 flex items-center justify-between gap-4">Uploads: <span>{d.uploads}</span></span>
-                             </div>
-                             
-                             {/* The Bar */}
-                             <div className="w-full relative flex items-end justify-center" style={{ height: '100%' }}>
-                                <div 
-                                   className="w-full max-w-[50px] bg-gradient-to-t from-accent-purple/40 to-accent-cyan/60 rounded-t-lg transition-all duration-500 ease-out group-hover:from-accent-purple group-hover:to-accent-cyan group-hover:shadow-[0_0_20px_rgba(6,182,212,0.4)] relative overflow-hidden" 
-                                   style={{ height: `${heightPercent}%` }}
-                                >
-                                   {/* Inner shine */}
-                                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shine"></div>
+                          <div key={i}>
+                            <div
+                              className="flex items-center gap-4"
+                              style={{
+                                padding: '14px 16px',
+                                borderRadius: 10,
+                                cursor: 'default',
+                                transition: 'background 150ms ease',
+                                animation: `oe-slideUp 300ms ${i * 80}ms both ease-out`,
+                              }}
+                              onMouseEnter={e => e.currentTarget.style.background = 'var(--oe-bg-elevated)'}
+                              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                            >
+                              {/* Rank badge */}
+                              <div style={{
+                                width: 32, height: 32, borderRadius: 8, flexShrink: 0,
+                                background: rank.bg,
+                                border: `1px solid ${rank.border}`,
+                                color: rank.color,
+                                fontFamily: 'var(--font-mono)',
+                                fontWeight: 700, fontSize: 13,
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                              }}>
+                                #{i + 1}
+                              </div>
+
+                              {/* Center */}
+                              <div className="flex-grow min-w-0">
+                                <div
+                                  className="oe-asset-title"
+                                  style={{
+                                    fontFamily: 'var(--font-sans)', fontWeight: 500, fontSize: 14,
+                                    color: 'var(--oe-text-primary)',
+                                    whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+                                    transition: 'color 150ms ease',
+                                  }}
+                                >{style.title}</div>
+                                {/* Mini bar */}
+                                <div style={{
+                                  marginTop: 8, height: 3,
+                                  background: 'var(--oe-bg-hover)',
+                                  borderRadius: 2, overflow: 'hidden',
+                                  display: 'flex',
+                                }}>
+                                  <div style={{
+                                    width: `${((style.viewsCount || 0) / styleMax) * 100}%`,
+                                    height: '100%',
+                                    background: 'var(--oe-accent-blue)',
+                                  }} />
+                                  <div style={{
+                                    width: `${((style.likesCount || 0) / styleMax) * 100}%`,
+                                    height: '100%',
+                                    background: 'var(--oe-accent-rose)',
+                                  }} />
                                 </div>
-                             </div>
-                             
-                             {/* Label */}
-                             <span className="text-[10px] md:text-xs text-text-primary/50 font-bold uppercase tracking-widest">{d.label}</span>
+                              </div>
+
+                              {/* Score */}
+                              <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                                <div style={{
+                                  fontFamily: 'var(--font-serif)', fontStyle: 'italic',
+                                  fontSize: 20, color: 'var(--oe-text-primary)',
+                                }}>{score.toLocaleString()}</div>
+                                <div style={{
+                                  fontFamily: 'var(--font-mono)', fontSize: 9,
+                                  textTransform: 'uppercase', letterSpacing: '0.1em',
+                                  color: 'var(--oe-text-tertiary)', marginTop: 2,
+                                }}>SCORE</div>
+                              </div>
+                            </div>
+                            {/* Divider (except last) */}
+                            {i < topStyles.length - 1 && (
+                              <div style={{ height: 1, background: 'var(--oe-border-subtle)', margin: '0 16px' }} />
+                            )}
                           </div>
                         );
                       })}
                     </div>
                   ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center text-center border-2 border-dashed border-white/10 rounded-2xl bg-black/20">
-                      <BarChart3 size={48} className="text-text-primary/20 mb-4" />
-                      <h4 className="text-lg font-bold text-text-primary/60">No Chronological Data</h4>
-                      <p className="text-text-primary/40 text-sm max-w-sm mt-2">Publish styles to see your performance growth matrix mapped over time.</p>
+                    <div style={{
+                      border: '2px dashed var(--oe-border-subtle)',
+                      borderRadius: 12,
+                      padding: 40,
+                      textAlign: 'center',
+                    }}>
+                      <Layers size={36} style={{ color: 'var(--oe-text-tertiary)', margin: '0 auto' }} />
+                      <div style={{ fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: 15, color: 'var(--oe-text-secondary)', marginTop: 12 }}>
+                        No assets published yet
+                      </div>
+                      <div style={{ fontFamily: 'var(--font-sans)', fontSize: 13, color: 'var(--oe-text-tertiary)', marginTop: 4 }}>
+                        Upload your first component to see rankings.
+                      </div>
                     </div>
                   )}
                 </div>
               </div>
+
+              {/* ═══ SECTION 11: ENGAGEMENT BREAKDOWN ═══ */}
+              <div style={s.cardLarge}>
+                {/* Header */}
+                <div className="flex items-start justify-between" style={{ marginBottom: 32 }}>
+                  <div>
+                    <div style={s.sectionTitle}>Engagement Breakdown</div>
+                    <div style={s.sectionSubtitle}>Relative distribution of interactions across all assets</div>
+                  </div>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--oe-text-tertiary)' }}>All time</span>
+                </div>
+
+                {/* Metric rows */}
+                <div className="flex flex-col" style={{ gap: 28 }}>
+                  {engagementConfig.map((item, i) => {
+                    const val = stats[item.key];
+                    const pct = Math.max(Math.round((val / maxEngagementValue) * 100), 0);
+                    const barWidth = Math.max((val / maxEngagementValue) * 100, 2);
+
+                    return (
+                      <div key={item.key} style={{ animation: `oe-slideUp 300ms ${i * 100}ms both ease-out` }}>
+                        {/* Row header */}
+                        <div className="flex items-center justify-between" style={{ marginBottom: 10 }}>
+                          <span className="flex items-center" style={{ gap: 10 }}>
+                            <item.Icon size={16} style={{ color: item.accent }} />
+                            <span style={{ fontFamily: 'var(--font-sans)', fontWeight: 500, fontSize: 14, color: 'var(--oe-text-secondary)' }}>
+                              {item.label}
+                            </span>
+                          </span>
+                          <span style={{
+                            fontFamily: 'var(--font-serif)', fontStyle: 'italic',
+                            fontSize: 22, color: 'var(--oe-text-primary)',
+                          }}>
+                            {val.toLocaleString()}
+                          </span>
+                        </div>
+
+                        {/* Bar track */}
+                        <div style={{
+                          height: 6, width: '100%',
+                          background: 'rgba(255,255,255,0.04)',
+                          borderRadius: 3, overflow: 'hidden',
+                          position: 'relative',
+                        }}>
+                          <div style={{
+                            height: '100%',
+                            borderRadius: 3,
+                            width: `${barWidth}%`,
+                            background: item.accent,
+                            transition: 'width 800ms ease-out',
+                            animation: `oe-engagementBarGrow 800ms ${i * 100}ms both ease-out`,
+                          }} />
+                        </div>
+
+                        {/* Percentage */}
+                        <div style={{
+                          textAlign: 'right', marginTop: 4,
+                          fontFamily: 'var(--font-mono)', fontSize: 11,
+                          color: 'var(--oe-text-tertiary)',
+                        }}>
+                          {pct}%
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* ═══ SECTION 12: UPGRADE CTA STRIP ═══ */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4" style={{
+                background: 'linear-gradient(135deg, rgba(79,142,255,0.05) 0%, rgba(167,139,250,0.05) 100%)',
+                borderTop: '1px solid var(--oe-border-subtle)',
+                borderBottom: '1px solid var(--oe-border-subtle)',
+                padding: '24px 32px',
+              }}>
+                <div className="flex flex-col" style={{ gap: 4 }}>
+                  <div className="flex items-center" style={{ gap: 10 }}>
+                    <Shield size={18} style={{ color: 'var(--oe-accent-blue)' }} />
+                    <span style={{ fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: 15, color: 'var(--oe-text-primary)' }}>
+                      Pro Analytics
+                    </span>
+                  </div>
+                  <span style={{ fontFamily: 'var(--font-sans)', fontWeight: 400, fontSize: 13, color: 'var(--oe-text-secondary)' }}>
+                    Unlock viewer demographics, daily breakdowns, and CSV report exports.
+                  </span>
+                </div>
+                <button
+                  style={{
+                    background: 'var(--oe-accent-blue)',
+                    color: '#fff',
+                    fontFamily: 'var(--font-sans)',
+                    fontWeight: 600, fontSize: 14,
+                    padding: '10px 22px',
+                    borderRadius: 8,
+                    border: 'none',
+                    cursor: 'pointer',
+                    transition: 'background 150ms ease',
+                    flexShrink: 0,
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.background = '#6fa3ff'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'var(--oe-accent-blue)'}
+                >
+                  Upgrade to Pro →
+                </button>
+              </div>
             </>
           )}
-
         </div>
       </div>
+
+      {/* Scoped styles for hover effects that can't be done inline */}
+      <style>{`
+        .oe-kpi-card { will-change: transform; }
+        .oe-asset-title { will-change: color; }
+        div:hover > .oe-asset-title { color: var(--oe-accent-blue) !important; }
+
+        @media (max-width: 768px) {
+          .oe-analytics-h1 { font-size: 32px !important; }
+        }
+      `}</style>
     </div>
   );
 };

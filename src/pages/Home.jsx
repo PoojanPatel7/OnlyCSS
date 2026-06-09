@@ -6,6 +6,8 @@ import {
   getCountFromServer, getAggregateFromServer, sum
 } from 'firebase/firestore';
 import StyleCard from '../components/StyleCard';
+import AdBlock from '../components/AdBlock';
+import AdSlot from '../components/AdSlot';
 import { ArrowRight, Flame, Sparkles, Trophy, Zap, Layers, Code2, Eye, Shield, Globe, Layout, Lightbulb } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -159,6 +161,15 @@ const FeaturesSection = () => (
           <p className="text-text-muted text-lg">Every design is crafted to look perfect on mobile devices, tablets, and massive ultra-wide monitors. Fluid typography and responsive grids built-in.</p>
         </ScrollReveal3D>
       </div>
+
+      <div className="max-w-6xl mx-auto mt-12">
+        <AdBlock 
+          title="Level up with Pro" 
+          description="Get access to exclusive premium components and advanced CSS techniques used by top tech companies." 
+          ctaText="Unlock Pro"
+          ctaLink="/pro"
+        />
+      </div>
     </div>
   </section>
 );
@@ -236,6 +247,16 @@ const IdeasSection = () => {
               </div>
             </ScrollReveal3D>
           ))}
+        </div>
+
+        <div className="mt-16 max-w-5xl mx-auto">
+           <AdBlock 
+             variant="compact"
+             title="Join our Weekly Design Challenges" 
+             description="Compete with other developers to build the best CSS components and win exclusive prizes." 
+             ctaText="View Challenges"
+             ctaLink="/challenges"
+           />
         </div>
       </div>
     </section>
@@ -348,11 +369,11 @@ const Home = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-up" style={{ animationDelay: '200ms' }}>
-            <Link to="/explore" className="px-6 py-3 rounded-lg font-semibold text-primary-bg bg-white hover:bg-gray-100 transition-colors shadow-lg flex items-center gap-2">
-              Explore Components <ArrowRight size={16} />
+            <Link to="/explore" className="px-8 py-4 rounded-xl font-bold text-primary-bg bg-white hover:bg-gray-200 hover:scale-105 active:scale-95 transition-all shadow-[0_0_40px_rgba(255,255,255,0.2)] flex items-center gap-2">
+              Explore Components <ArrowRight size={18} />
             </Link>
-            <Link to="/upload" className="px-6 py-3 rounded-lg font-semibold text-white bg-white/5 border border-white/10 hover:bg-white/10 transition-colors flex items-center gap-2">
-              <Code2 size={16} /> Submit Styles
+            <Link to="/upload" className="px-8 py-4 rounded-xl font-bold text-white glass-pro hover:bg-white/10 hover:-translate-y-1 transition-all flex items-center gap-2">
+              <Code2 size={18} /> Submit Styles
             </Link>
           </div>
 
@@ -389,6 +410,7 @@ const Home = () => {
       </section>
 
       <FeaturesSection />
+      <AdSlot format="horizontal" className="my-12" />
       <HowItWorksSection />
       <IdeasSection />
 
@@ -583,6 +605,15 @@ const Home = () => {
                 <p className="text-text-muted text-lg">No creators found. Start building your reputation!</p>
               </div>
             )}
+          </div>
+          
+          <div className="mt-16">
+            <AdBlock 
+              title="Become a Sponsor" 
+              description="Reach thousands of frontend developers and designers who visit OnlyCSS daily." 
+              ctaText="See Sponsorship Options"
+              ctaLink="/sponsor"
+            />
           </div>
         </div>
       </section>

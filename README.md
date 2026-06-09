@@ -365,6 +365,16 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
 
 ## 📋 Version History
 
+### 🔹 v4.1.0 — *Security, Admin Panel & Monetization* (June 09, 2026)
+> Full integration of the Secure Admin Suite, advanced diagnostic tools, and AdSense readiness.
+- ✨ **Secure Admin Panel** — A fully operational, role-based backend for platform moderation.
+- ✨ **Mobile Admin Experience** — Custom top-bar navigation built explicitly for administrators on mobile devices.
+- ✨ **Emergency Access Override** — Hardcoded email-based failsafe to guarantee super_admin status.
+- ✨ **Diagnostic Tools** — Injectable UI error banners to catch and display raw Firestore permission errors (`ON_SNAPSHOT_ERROR` and `SET_DOC_ERROR`).
+- ✨ **Monetization Readiness** — Successful integration of `ads.txt` in the public directory and Google AdSense `<meta>` tags in the root HTML.
+- 🔒 **Security Rules Validation** — Ensured robust read/write checks and restored Firebase App Check (reCAPTCHA Enterprise).
+- 🐛 **Navigation Bug Fixes** — Resolved touch-hijacking issues on mobile profile dropdowns, ensuring menus open cleanly on all devices.
+
 ### 🔹 v4.0.0 — *Home Redesign & Leaderboard Update* (May 24, 2026)
 > Professional-grade UI overhaul with new sections, animations, and branding.
 - ✨ **Home Page Redesign** — Vercel/Stripe-inspired clean, minimalist dark aesthetic

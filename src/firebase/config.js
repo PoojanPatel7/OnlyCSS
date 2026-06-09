@@ -3,9 +3,9 @@ import { getAuth, GoogleAuthProvider, GithubAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { getAnalytics } from "firebase/analytics";
+import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "firebase/app-check";
 
 const firebaseConfig = {
-  // TODO: Replace with actual Firebase configuration from the user
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "dummy-api-key",
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "onlycss-dummy.firebaseapp.com",
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "onlycss-dummy",
@@ -16,6 +16,18 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+
+// Initialize App Check
+if (typeof window !== 'undefined') {
+  if (import.meta.env.DEV) {
+    self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+  }
+  initializeAppCheck(app, {
+    provider: new ReCaptchaEnterpriseProvider('6LdQpBUtAAAAAPaH_W5vL0_MCxzm-QMYFCF2K0tg'),
+    isTokenAutoRefreshEnabled: true
+  });
+}
+
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);

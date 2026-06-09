@@ -418,8 +418,12 @@ const StyleCard = ({ style, isPreview = false, className = "", authorOverride = 
             </div>
           )}
         </div>
-        <div className={`absolute top-3 right-3 text-[10px] px-2.5 py-1 rounded-full border z-10 truncate max-w-[100px] transition-colors ${badgeClass}`}>
-          {style.category}
+        <div className="absolute top-3 right-3 flex flex-col gap-1 items-end z-10 max-w-[50%]">
+          {(style.categories || (style.category ? [style.category] : [])).slice(0, 3).map(cat => (
+            <div key={cat} className={`text-[10px] px-2.5 py-1 rounded-full border truncate max-w-full transition-colors ${badgeClass}`}>
+              {cat}
+            </div>
+          ))}
         </div>
 
         <iframe

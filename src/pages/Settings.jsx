@@ -5,6 +5,7 @@ import { Settings as SettingsIcon, User, Bell, Shield, Key, Save, CheckCircle2, 
 import DashboardSidebar from '../components/layout/DashboardSidebar';
 import { db } from '../firebase/config';
 import { collection, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
+import AdSlot from '../components/AdSlot';
 
 const Toggle = ({ enabled, onChange }) => (
   <button 
@@ -239,6 +240,8 @@ const Settings = () => {
               </button>
             </div>
           </div>
+
+          <AdSlot format="horizontal" />
 
           <div className="flex flex-col lg:flex-row gap-6">
             {/* Settings Navigation */}
